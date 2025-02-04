@@ -1,0 +1,39 @@
+.crazy-navbar {
+    background: linear-gradient(45deg, #ff00ff, #ff6600, #00ffff);
+    animation: crazyBackground 5s infinite alternate;
+    padding: 15px;
+    border-bottom: 4px solid #fff;
+  }
+  
+  @keyframes crazyBackground {
+    0% { background: linear-gradient(45deg, #ff00ff, #ff6600, #00ffff); }
+    100% { background: linear-gradient(45deg, #ff6600, #00ffff, #ff00ff); }
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  }
+  
+  .crazy-link {
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff !important;
+    text-transform: uppercase;
+    margin-right: 20px;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+  }
+  
+  .crazy-link:hover {
+    color: #000 !important;
+    transform: scale(1.2);
+  }
+  
+  .crazy-link.active {
+    color: yellow !important;
+    border-bottom: 3px solid yellow;
+  }
+  
