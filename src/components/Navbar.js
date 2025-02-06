@@ -9,6 +9,8 @@ const NavbarComponent = () => {
     <Navbar expand="md" className="crazy-navbar">
       <Container>
         <Navbar.Brand href="/" className="logo">🚀 CrazyNav</Navbar.Brand>
+        <Navbar.Brand href="/" className="logo">🚀 CrazyNav</Navbar.Brand>
+
         <Navbar.Toggle aria-controls="basic-navbar-nav">
           <span className="navbar-toggler-icon"></span>
         </Navbar.Toggle>
