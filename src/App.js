@@ -4,6 +4,10 @@ function App() {
   return (
     <div>
       <NavbarComponent />
+      <NavbarComponent />
+
+      <NavbarComponent />
+
       
 
     </div>
