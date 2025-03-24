@@ -2,5 +2,7 @@
   font-family: Arial, sans-serif;
   background: linear-gradient(to right, #1a1a3d, #2a2a5e);
   min-height: 100vh;
-  color: black;
+  color: White;
+  position: relative;
+  overflow: hidden;
 }
