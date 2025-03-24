@@ -1,81 +1,122 @@
 .hero-section {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    padding: 50px 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    flex-wrap: wrap; /* Allows cards to stack on smaller screens */
-  }
-  
-  .card {
-    background-color: #2a2a5e; /* Slightly lighter than the page background */
-    border-radius: 15px;
-    padding: 30px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-    flex: 1;
-    min-width: 300px; /* Ensures cards don't get too narrow */
-    max-width: 500px; /* Limits card width */
-    transition: transform 0.3s ease; /* Smooth hover effect */
-  }
-  
-  .card:hover {
-    transform: translateY(-5px); /* Slight lift on hover */
-  }
-  
-  .card h1 {
-    font-size: 28px;
-    margin-bottom: 15px;
-  }
-  
-  .card p {
-    font-size: 16px;
-    margin-bottom: 20px;
-    color: #d3d3d3;
-  }
-  
-  .practice-btn, .talent-btn {
-    display: flex;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 50px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.card {
+  background-color: #2a2a5e;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  flex: 1;
+  width: 500px;
+  height: 600px;
+  transition: transform 0.3s ease, opacity 0.6s ease;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.card.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card h1 {
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.card p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #d3d3d3;
+}
+
+.practice-btn, .talent-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.practice-btn {
+  background-color: #4a4a8e;
+  color: white;
+}
+
+.talent-btn {
+  background-color: #00aaff;
+  color: white;
+}
+/* Add these to your HeroSection.css file */
+.student-icon, .hr-icon {
+  display: block;
+  width: 400px;
+  height: 400px;
+  object-fit: contain;
+}
+
+/* Make sure your card content is properly laid out */
+.card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 200%;
+}
+
+.practice-btn:hover {
+  background-color: #5a5a9e;
+}
+
+.talent-btn:hover {
+  background-color: #0088cc;
+}
+
+.btn-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.card-image {
+  width: 150px;
+  height: 150px;
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 20px;
-    font-size: 16px;
-    cursor: pointer;
   }
-  
-  .practice-btn {
-    background-color: #4a4a8e;
-    color: white;
+
+  .card {
+    max-width: 100%;
+    flex-direction: column;
+    text-align: center;
   }
-  
-  .talent-btn {
-    background-color: #00aaff;
-    color: white;
+
+  .card-image {
+    width: 120px;
+    height: 120px;
   }
-  
-  .practice-btn:hover {
-    background-color: #5a5a9e;
-  }
-  
-  .talent-btn:hover {
-    background-color: #0088cc;
-  }
-  
-  .btn-icon {
-    width: 20px;
-    height: 20px;
-  }
-  
-  /* Responsive design: Stack cards on smaller screens */
-  @media (max-width: 768px) {
-    .hero-section {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .card {
-      max-width: 100%;
-    }
-  }
+}
