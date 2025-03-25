@@ -1,55 +1,23 @@
+/* src/components/Navbar.css */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #2a2a5e;
-    border-bottom: 1px solid #3a3a7e;
-  }
-  
-  .navbar-logo {
-    font-size: 24px;
-    font-weight: bold;
-    color: #00aaff;
-  }
-  
-  .navbar-links {
-    display: flex;
-    list-style: none;
-    gap: 20px;
-  }
-  
-  .navbar-links li a {
-    color: white;
-    text-decoration: none;
-    font-size: 16px;
-  }
-  
-  .navbar-links li a:hover {
-    color: #00aaff;
-  }
-  
-  .navbar-buttons {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .login-btn {
-    color: white;
-    text-decoration: none;
-    padding: 8px 16px;
-    font-size: 16px;
-  }
-  
-  .signup-btn {
-    color: white;
-    background-color: #00aaff;
-    text-decoration: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 16px;
-  }
-  
-  .signup-btn:hover {
-    background-color: #0088cc;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+}
+
+.navbar-brand {
+  font-size: 1.5em;
+}
+
+.navbar-links button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
