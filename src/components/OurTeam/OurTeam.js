@@ -3,12 +3,12 @@ import './OurTeam.css';
 
 const OurTeam = () => {
   const teamMembers = [
-    { name: 'Sarah Johnson', role: 'Product Designer' },
-    { name: 'Sarah Johnson', role: 'Product Designer' },
-    { name: 'Sarah Johnson', role: 'Product Designer' },
-    { name: 'Sarah Johnson', role: 'Product Designer' },
-    { name: 'Sarah Johnson', role: 'Product Designer' },
-    { name: 'Sarah Johnson', role: 'Product Designer' },
+    { name: 'AADITYA PRAKASH', role: 'Backend Dev' },
+    { name: 'CHINMAY PATIL', role: 'Backend Dev' },
+    { name: 'RAJAS DEV', role: 'Frontend Dev' },
+    { name: 'YASH PATEL', role: 'designer' },
+    { name: 'DHYEY PATEL', role: 'designer' },
+    
   ];
 
   return (
