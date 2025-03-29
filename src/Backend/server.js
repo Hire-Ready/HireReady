@@ -1,20 +1,22 @@
-// src/Backend/server.js
 const express = require('express');
 const multer = require('multer');
 const pdfParse = require('pdf-parse');
 const Tesseract = require('tesseract.js');
 const fs = require('fs');
+const path = require('path');
+const cors = require('cors');
+
 const app = express();
-const upload = multer({ dest: 'uploads/' });
+
+// Create uploads directory if it doesn’t exist
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+const upload = multer({ dest: uploadDir });
 
 app.use(express.json());
-
-// Enable CORS to allow communication with the React frontend
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3001'); // React app URL
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
+app.use(cors({ origin: 'http://localhost:3000' })); // Match React frontend port
 
 // Endpoint to handle resume uploads
 app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
@@ -61,4 +63,4 @@ app.post('/feedback', (req, res) => {
   res.json({ feedback });
 });
 
-app.listen(3000, () => console.log('Server running on port 3000'));
+app.listen(5000, () => console.log('Server running on port 5000'));
