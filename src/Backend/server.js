@@ -3,7 +3,8 @@ const multer = require('multer');
 const pdfParse = require('pdf-parse');
 const Tesseract = require('tesseract.js');
 const fs = require('fs');
-const axios = require('axios'); // For API calls to the model
+const axios = require('axios');
+
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 
@@ -15,7 +16,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Existing /upload-resumes endpoint (unchanged)
+// /upload-resumes endpoint
 app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
   try {
     const resumeData = await Promise.all(
@@ -42,7 +43,7 @@ app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
   }
 });
 
-// Updated /questions endpoint
+// /questions endpoint
 app.post('/questions', async (req, res) => {
   const { type, difficulty, resumeData, jobDescription } = req.body;
 
@@ -53,13 +54,10 @@ app.post('/questions', async (req, res) => {
   try {
     const questions = await Promise.all(
       resumeData.map(async (resume) => {
-        // Check if the resume mentions specific skills (e.g., Java)
         const hasJavaExperience = resume.toLowerCase().includes('java');
 
-        // Prepare the prompt for the model
         const prompt = `Given this resume: "${resume.slice(0, 500)}..." and this job description: "${jobDescription.slice(0, 500)}...", generate a personalized interview question for the candidate. If the candidate has Java experience, ask about their Java projects. If not, ask how they would approach learning Java for the role.`;
 
-        // Call the fine-tuned model (assuming it's hosted as an API)
         const modelResponse = await axios.post('https://your-model-api-endpoint', {
           prompt: prompt,
           max_length: 100,
@@ -76,11 +74,17 @@ app.post('/questions', async (req, res) => {
   }
 });
 
-// Existing /feedback endpoint (unchanged)
+// /feedback endpoint
 app.post('/feedback', (req, res) => {
   const { responses } = req.body;
   const feedback = responses.length > 0 ? 'Your answers were detailed, but try to be more concise.' : 'Please provide more detailed answers.';
   res.json({ feedback });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something broke!' });
 });
 
 app.listen(3000, () => console.log('Server running on port 3000'));
