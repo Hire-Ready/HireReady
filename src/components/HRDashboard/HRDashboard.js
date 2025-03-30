@@ -1,6 +1,5 @@
-// src/components/HRDashboard/HRDashboard.js
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react'; // Import useState along with React
+import axios from 'axios'; // Import axios
 import './HRDashboard.css';
 
 function HRDashboard({ onStart, onBack }) {
