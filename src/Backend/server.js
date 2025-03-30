@@ -1,22 +1,21 @@
-// src/Backend/server.js
 const express = require('express');
 const multer = require('multer');
 const pdfParse = require('pdf-parse');
 const Tesseract = require('tesseract.js');
 const fs = require('fs');
+const axios = require('axios'); // For API calls to the model
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 
 app.use(express.json());
 
-// Enable CORS to allow communication with the React frontend
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3001'); // React app URL
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
 
-// Endpoint to handle resume uploads
+// Existing /upload-resumes endpoint (unchanged)
 app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
   try {
     const resumeData = await Promise.all(
@@ -25,7 +24,6 @@ app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
         const pdfData = await pdfParse(fileBuffer);
         let extractedText = pdfData.text;
 
-        // If extraction is poor, use Tesseract OCR
         if (!extractedText || extractedText.trim().length < 50) {
           const ocrResult = await Tesseract.recognize(file.path, 'eng', {
             logger: (m) => console.log(m),
@@ -33,7 +31,6 @@ app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
           extractedText = ocrResult.data.text;
         }
 
-        // Clean up uploaded file
         fs.unlinkSync(file.path);
         return extractedText;
       })
@@ -45,16 +42,41 @@ app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
   }
 });
 
-// Endpoint to generate questions
-app.post('/questions', (req, res) => {
-  const { type, difficulty, resumeData } = req.body;
-  const questions = resumeData
-    ? resumeData.map((resume) => `Tell me about your experience mentioned in your resume: ${resume.slice(0, 100)}...`)
-    : ['Tell me about yourself.', 'Why do you want this job?'];
-  res.json({ questions });
+// Updated /questions endpoint
+app.post('/questions', async (req, res) => {
+  const { type, difficulty, resumeData, jobDescription } = req.body;
+
+  if (!resumeData || !jobDescription) {
+    return res.status(400).json({ error: 'Resume data and job description are required' });
+  }
+
+  try {
+    const questions = await Promise.all(
+      resumeData.map(async (resume) => {
+        // Check if the resume mentions specific skills (e.g., Java)
+        const hasJavaExperience = resume.toLowerCase().includes('java');
+
+        // Prepare the prompt for the model
+        const prompt = `Given this resume: "${resume.slice(0, 500)}..." and this job description: "${jobDescription.slice(0, 500)}...", generate a personalized interview question for the candidate. If the candidate has Java experience, ask about their Java projects. If not, ask how they would approach learning Java for the role.`;
+
+        // Call the fine-tuned model (assuming it's hosted as an API)
+        const modelResponse = await axios.post('https://your-model-api-endpoint', {
+          prompt: prompt,
+          max_length: 100,
+        });
+
+        return modelResponse.data.generated_text || 'Tell me about your experience.';
+      })
+    );
+
+    res.json({ questions });
+  } catch (error) {
+    console.error('Error generating questions:', error);
+    res.status(500).json({ error: 'Failed to generate questions' });
+  }
 });
 
-// Endpoint to generate feedback
+// Existing /feedback endpoint (unchanged)
 app.post('/feedback', (req, res) => {
   const { responses } = req.body;
   const feedback = responses.length > 0 ? 'Your answers were detailed, but try to be more concise.' : 'Please provide more detailed answers.';

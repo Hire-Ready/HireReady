@@ -12,7 +12,7 @@ import InterviewScreen from './components/InterviewScreen/InterviewScreen';
 import FeedbackScreen from './components/FeedbackScreen/FeedbackScreen';
 
 function App() {
-  const [step, setStep] = useState('landing'); // Tracks current screen: landing, hr, setup, interview, feedback
+  const [step, setStep] = useState('landing'); 
   const [interviewConfig, setInterviewConfig] = useState({});
   const [responses, setResponses] = useState([]);
 
