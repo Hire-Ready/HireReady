@@ -1,0 +1,115 @@
+.end-section {
+    background-color: #1a1a2e; /* Matches the dark background of your website */
+    padding: 40px 20px;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+  }
+  
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .footer-column {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .footer-logo {
+    font-size: 24px;
+    color: #a3a3ff; /* Light purple for the logo */
+    margin: 0 0 10px;
+  }
+  
+  .footer-tagline {
+    font-size: 14px;
+    color: #b0b0b0; /* Light gray for the tagline */
+    margin: 0;
+  }
+  
+  .footer-column h4 {
+    font-size: 16px;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+  
+  .footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer-column li {
+    margin-bottom: 10px;
+  }
+  
+  .footer-column a {
+    font-size: 14px;
+    color: #b0b0b0;
+    text-decoration: none;
+  }
+  
+  .footer-column a:hover {
+    color: #00aaff; /* Blue on hover */
+    text-decoration: underline;
+  }
+  
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 20px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid #3a3a6e;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .copyright {
+    font-size: 14px;
+    color: #b0b0b0;
+    margin: 0;
+  }
+  
+  .social-icons {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .social-icon {
+    display: inline-block;
+    text-decoration: none;
+  }
+  
+  .social-icon-img {
+    width: 24px; /* Adjust size to match the design */
+    height: 24px;
+    transition: opacity 0.3s ease;
+  }
+  
+  .social-icon:hover .social-icon-img {
+    opacity: 0.7; /* Subtle hover effect */
+  }
+  
+  /* Responsive design for smaller screens */
+  @media (max-width: 768px) {
+    .footer-content {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .footer-bottom {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .social-icons {
+      margin-top: 10px;
+    }
+  }

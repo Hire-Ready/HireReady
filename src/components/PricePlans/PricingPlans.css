@@ -1,5 +1,5 @@
 .pricing-plans {
-  background: linear-gradient(180deg, #1a0b3b 0%, #2e1a5c 100%);
+  
   padding: 50px 20px;
   text-align: center;
   color: white;
@@ -26,7 +26,7 @@
 }
 
 .plan-card.highlighted {
-  background: linear-gradient(135deg, #3b1a7a 0%, #5c2e9b 100%);
+  
   transform: scale(1.05);
 }
 
