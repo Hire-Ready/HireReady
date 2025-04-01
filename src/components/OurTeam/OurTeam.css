@@ -1,0 +1,54 @@
+.our-team {
+  background: #1a0b3b;
+  padding: 50px 20px;
+  text-align: center;
+  color: white;
+}
+
+.our-team h2 {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.team-card {
+  background: #2e1a5c;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+}
+
+.team-image-placeholder {
+  width: 100px;
+  height: 100px;
+  background: #d3d3d3;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+}
+
+.team-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.team-card p {
+  font-size: 0.9rem;
+  color: #d3d3d3;
+}
+
+.our-journey {
+  margin-top: 20px;
+}
+
+.our-journey a {
+  color: #00aaff;
+  text-decoration: none;
+  font-size: 1.1rem;
+}

@@ -1,0 +1,24 @@
+/* src/components/FeedbackScreen/FeedbackScreen.css */
+.feedback-screen {
+    padding: 20px;
+    text-align: center;
+    color: #333;
+  }
+  
+  .feedback-screen h2 {
+    margin-bottom: 20px;
+  }
+  
+  .feedback-screen p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+  }
+  
+  .feedback-screen button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
