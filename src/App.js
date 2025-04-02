@@ -46,6 +46,7 @@ function App() {
         {step === 'landing' && (
           <>
             <HeroSection />
+            <HeroSection />
             <HowItWorks />
             <OurTeam />
             <PricingPlans />
