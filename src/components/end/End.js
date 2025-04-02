@@ -33,7 +33,7 @@ const End = () => {
     <footer className="end-section">
       <div className="footer-content">
         <div className="footer-column">
-          <h3 className="footer-logo">CosmicHire</h3>
+          <h3 className="footer-logo">HireReady</h3>
           <p className="footer-tagline">
             Connecting talent with opportunities in the digital age.
           </p>
@@ -71,7 +71,7 @@ const End = () => {
       </div>
       <div className="footer-bottom">
         <p className="copyright">
-          © 2024 CosmicHire. All rights reserved.
+          © 2024 HireReady. All rights reserved.
         </p>
         <div className="social-icons">
           {footerData.socials.map((social, index) => (
