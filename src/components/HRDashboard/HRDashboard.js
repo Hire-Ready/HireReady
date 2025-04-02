@@ -1,4 +1,3 @@
-// src/components/HRDashboard/HRDashboard.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import './HRDashboard.css';
@@ -20,9 +19,7 @@ function HRDashboard({ onStart, onBack }) {
   const handleParse = async () => {
     setErrorMessage('');
     const formData = new FormData();
-    resumes.forEach((resume) => {
-      formData.append('resumes', resume);
-    });
+    resumes.forEach((resume) => formData.append('resumes', resume));
 
     try {
       const response = await axios.post('http://localhost:3000/upload-resumes', formData, {
@@ -35,7 +32,7 @@ function HRDashboard({ onStart, onBack }) {
       setErrorMessage(
         error.response?.data?.details
           ? `Failed to parse resumes: ${error.response.data.details}`
-          : 'Failed to parse resumes. Please ensure the backend server is running on port 3000.'
+          : 'Failed to parse resumes. Ensure the backend server is running on port 3000.'
       );
     }
   };
@@ -73,13 +70,15 @@ function HRDashboard({ onStart, onBack }) {
             parsedData.map((data, index) => (
               <div key={index} className="resume-data">
                 <h4>Resume {index + 1}</h4>
-                <pre>{data}</pre>
+                <pre>{JSON.stringify(data, null, 2)}</pre> {/* Pretty-print JSON */}
               </div>
             ))
           ) : (
             <p>No data parsed.</p>
           )}
-          <button onClick={handleProceed}>Proceed to Interview</button>
+          <button onClick={handleProceed} disabled={!parsedData.length}>
+            Proceed to Interview
+          </button>
         </div>
       )}
     </div>
