@@ -17,7 +17,16 @@ import InterviewScreen from './components/InterviewScreen/InterviewScreen';
 import FeedbackScreen from './components/FeedbackScreen/FeedbackScreen';
 
 function App() {
+
   const [step, setStep] = useState('landing');
+
+
+  const [step, setStep] = useState('landing');
+
+
+
+
+
   const [interviewConfig, setInterviewConfig] = useState({});
   const [responses, setResponses] = useState([]);
   const [showBackToTop, setShowBackToTop] = useState(false);
