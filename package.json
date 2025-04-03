@@ -5,6 +5,18 @@
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+
+
+    "@tsparticles/basic": "^3.8.1",
+    "@tsparticles/engine": "^3.8.1",
+    "@tsparticles/interaction-external-push": "^3.8.1",
+    "@tsparticles/interaction-external-repulse": "^3.8.1",
+    "@tsparticles/interaction-external-trail": "^3.8.1",
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.8.1",
+
+    "@huggingface/transformers": "^3.4.1",
+
     "axios": "^1.8.4",
     "bootstrap": "^5.3.3",
     "cra-template": "1.2.0",
