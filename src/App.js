@@ -21,9 +21,6 @@ function App() {
   const [step, setStep] = useState('landing');
 
 
-  const [step, setStep] = useState('landing');
-
-  const [step, setStep] = useState('landing'); 
 
 
   const [interviewConfig, setInterviewConfig] = useState({});
