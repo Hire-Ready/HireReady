@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './HRDashboard.css';
 
-function HRDashboard({ onStart, onBack }) {
+function HRDashboard({ onBack }) {  // Receive onBack prop
   const [resumes, setResumes] = useState([]);
   const [parsedData, setParsedData] = useState([]);
   const [isParsed, setIsParsed] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Added loading state
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleFileUpload = (e) => {
@@ -19,7 +19,7 @@ function HRDashboard({ onStart, onBack }) {
 
   const handleParse = async () => {
     setErrorMessage('');
-    setIsLoading(true); // Set loading to true
+    setIsLoading(true);
     const formData = new FormData();
     resumes.forEach((resume) => formData.append('resumes', resume));
 
@@ -30,19 +30,14 @@ function HRDashboard({ onStart, onBack }) {
       setParsedData(response.data.resumeData);
       setIsParsed(true);
     } catch (error) {
-      console.error('Error uploading resumes:', error);
       setErrorMessage(
         error.response?.data?.details
           ? `Failed to parse resumes: ${error.response.data.details}`
           : 'Failed to parse resumes. Ensure the backend server is running on port 3000.'
       );
     } finally {
-      setIsLoading(false); // Set loading to false
+      setIsLoading(false);
     }
-  };
-
-  const handleProceed = () => {
-    onStart({ resumeData: parsedData });
   };
 
   return (
@@ -64,7 +59,7 @@ function HRDashboard({ onStart, onBack }) {
             'Parse Resumes'
           )}
         </button>
-        <button onClick={onBack}>Back to Home</button>
+        <button onClick={onBack}>Back to Home</button> {/* Back Button */}
       </div>
 
       {errorMessage && (
@@ -86,9 +81,6 @@ function HRDashboard({ onStart, onBack }) {
           ) : (
             <p>No data parsed.</p>
           )}
-          <button onClick={handleProceed} disabled={!parsedData.length}>
-            Proceed to Interview
-          </button>
         </div>
       )}
     </div>
