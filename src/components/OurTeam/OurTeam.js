@@ -2,13 +2,13 @@ import React from 'react';
 import './OurTeam.css';
 
 const OurTeam = () => {
+  // eslint-disable-next-line no-useless-escape
   const teamMembers = [
-    { name: 'Sarah Johnson', role: 'Product Designer' },
-    { name: 'Sarah Johnson', role: 'Product Designer' },
-    { name: 'Sarah Johnson', role: 'Product Designer' },
-    { name: 'Sarah Johnson', role: 'Product Designer' },
-    { name: 'Sarah Johnson', role: 'Product Designer' },
-    { name: 'Sarah Johnson', role: 'Product Designer' },
+    { name: 'AADITYA PRAKASH', role: 'Backend Dev', image: './images/aaditya.jpg' },
+    { name: 'Chinmay patil', role: 'Backend Dev', image: './images/chinmay.jpg' },
+    { name: 'RAJAS DEV', role: 'Frontend Dev', image: './images/rajas.jpg' },
+    { name: 'Yash Patel', role: 'Product Designer', image: './images/yash.jpg' },
+    { name: 'Dhyey Patel', role: 'Product Designer', image: './images/dhyey.jpg' },
   ];
 
   return (
@@ -17,7 +17,7 @@ const OurTeam = () => {
       <div className="team-grid">
         {teamMembers.map((member, index) => (
           <div className="team-card" key={index}>
-            <div className="team-image-placeholder"></div>
+            <img src={member.image} alt={member.name} className="team-image" />
             <h3>{member.name}</h3>
             <p>{member.role}</p>
           </div>
