@@ -3,21 +3,34 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  background-color: #333;
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #1a73e8, #004ba0);
   color: white;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 
 .navbar-brand {
-  font-size: 1.5em;
+  font-size: 1.8em;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
 .navbar-links button {
-  margin-left: 10px;
-  padding: 5px 10px;
-  background-color: #007bff;
-  color: white;
+  margin-left: 15px;
+  padding: 8px 15px;
+  background: #ffcc00;
+  color: #333;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: bold;
   cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+.navbar-links button:hover {
+  background: #ffaa00;
+  transform: scale(1.05);
+  box-shadow: 0px 4px 6px rgba(255, 204, 0, 0.4);
 }
