@@ -31,7 +31,7 @@ const HeroSection = () => {
     {
       title: "For HR Professionals",
       description: "Find the best talent effortlessly with our AI-powered matching system. Streamline your hiring process, assess candidates efficiently, and connect with top professionals in your industry!",
-      buttonText: "Find Talent",
+      buttonText: "HR MODE",
       buttonIcon: searchIcon,
       buttonClass: "talent-btn",
       animatedIcon: hrIcon,

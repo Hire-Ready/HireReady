@@ -1,24 +1,48 @@
 /* src/components/FeedbackScreen/FeedbackScreen.css */
 .feedback-screen {
-    padding: 20px;
-    text-align: center;
-    color: #333;
-  }
-  
-  .feedback-screen h2 {
-    margin-bottom: 20px;
-  }
-  
-  .feedback-screen p {
-    font-size: 1.2em;
-    margin-bottom: 20px;
-  }
-  
-  .feedback-screen button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.feedback-screen h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.feedback-screen p {
+  font-size: 1.2rem;
+  color: #4a5568;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.feedback-screen button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #4c51bf;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.feedback-screen button:hover {
+  background-color: #5a67d8;
+}

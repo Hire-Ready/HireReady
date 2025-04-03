@@ -6,6 +6,7 @@ function HRDashboard({ onStart, onBack }) {
   const [resumes, setResumes] = useState([]);
   const [parsedData, setParsedData] = useState([]);
   const [isParsed, setIsParsed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Added loading state
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleFileUpload = (e) => {
@@ -18,6 +19,7 @@ function HRDashboard({ onStart, onBack }) {
 
   const handleParse = async () => {
     setErrorMessage('');
+    setIsLoading(true); // Set loading to true
     const formData = new FormData();
     resumes.forEach((resume) => formData.append('resumes', resume));
 
@@ -34,6 +36,8 @@ function HRDashboard({ onStart, onBack }) {
           ? `Failed to parse resumes: ${error.response.data.details}`
           : 'Failed to parse resumes. Ensure the backend server is running on port 3000.'
       );
+    } finally {
+      setIsLoading(false); // Set loading to false
     }
   };
 
@@ -51,15 +55,21 @@ function HRDashboard({ onStart, onBack }) {
       <p>{resumes.length} resume(s) selected</p>
 
       <div className="button-group">
-        <button onClick={handleParse} disabled={!resumes.length}>
-          Parse Resumes
+        <button onClick={handleParse} disabled={!resumes.length || isLoading}>
+          {isLoading ? (
+            <>
+              <span className="spinner"></span> Parsing...
+            </>
+          ) : (
+            'Parse Resumes'
+          )}
         </button>
         <button onClick={onBack}>Back to Home</button>
       </div>
 
       {errorMessage && (
         <div className="error-message">
-          <p style={{ color: 'red' }}>{errorMessage}</p>
+          <p>{errorMessage}</p>
         </div>
       )}
 
@@ -70,7 +80,7 @@ function HRDashboard({ onStart, onBack }) {
             parsedData.map((data, index) => (
               <div key={index} className="resume-data">
                 <h4>Resume {index + 1}</h4>
-                <pre>{JSON.stringify(data, null, 2)}</pre> {/* Pretty-print JSON */}
+                <pre>{JSON.stringify(data, null, 2)}</pre>
               </div>
             ))
           ) : (

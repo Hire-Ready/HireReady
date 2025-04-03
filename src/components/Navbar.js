@@ -8,7 +8,7 @@ function Navbar({ onHRClick, onCandidateClick }) {
       <div className="navbar-brand">HR Mock Interview</div>
       <div className="navbar-links">
         <button onClick={onHRClick}>HR Mode</button>
-        <button onClick={onCandidateClick}>Candidate Mode</button>
+        {/* <button onClick={onCandidateClick}>Candidate Mode</button> */}
       </div>
     </nav>
   );
