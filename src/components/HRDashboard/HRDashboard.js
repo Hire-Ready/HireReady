@@ -8,6 +8,8 @@ function HRDashboard({ onBack }) {  // Receive onBack prop
   const [isParsed, setIsParsed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [jobDescription, setJobDescription] = useState('');
+  const [employeeCount, setEmployeeCount] = useState('1');
 
   const handleFileUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -40,9 +42,61 @@ function HRDashboard({ onBack }) {  // Receive onBack prop
     }
   };
 
+
+  const handleProceed = () => {
+    onStart({ resumeData: parsedData, jobDescription, employeeCount });
+  };
+
+  const handlePaste = () => {
+    navigator.clipboard.readText()
+      .then(text => {
+        setJobDescription(text);
+      })
+      .catch(err => {
+        console.error('Failed to paste: ', err);
+        setErrorMessage('Failed to paste from clipboard');
+      });
+  };
+
+  const handleEmployeeCountChange = (e) => {
+    const value = e.target.value;
+    if (value === '' || (Number(value) >= 1 && !isNaN(value))) {
+      setEmployeeCount(value);
+    }
+  };
+
+
   return (
     <div className="hr-dashboard">
       <h2>HR Dashboard</h2>
+      
+      <label>
+        Job Description:
+        <div className="job-description-wrapper">
+          <textarea 
+            className="job-description"
+            value={jobDescription}
+            onChange={(e) => setJobDescription(e.target.value)}
+            placeholder="Enter or paste job description here..."
+          />
+          <button className="paste-button" onClick={handlePaste}>
+            Paste
+          </button>
+        </div>
+      </label>
+
+      <label>
+        Number of Employees Required:
+        <input
+          type="number"
+          className="employee-count"
+          value={employeeCount}
+          onChange={handleEmployeeCountChange}
+          min="1"
+          placeholder="e.g., 5"
+        />
+      </label>
+
       <label>
         Upload Resumes:
         <input type="file" multiple accept=".pdf" onChange={handleFileUpload} />

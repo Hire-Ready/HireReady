@@ -26,7 +26,6 @@ function App() {
 
 
 
-
   const [interviewConfig, setInterviewConfig] = useState({});
   const [responses, setResponses] = useState([]);
   const [showBackToTop, setShowBackToTop] = useState(false);
