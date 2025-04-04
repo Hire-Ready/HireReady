@@ -261,8 +261,8 @@
 
 .hr-dashboard .job-description-wrapper {
   position: relative;
-  width: 100%;
-  max-width: 600px; /* Increased width */
+  width: 280%;
+  max-width: 8000px; /* Increased width */
   height: 200px; /* Increased height */
 }
 
