@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './HRDashboard.css';
 
-function HRDashboard({ onStart, onBack }) {
+function HRDashboard({ onBack }) {  // Receive onBack prop
   const [resumes, setResumes] = useState([]);
   const [parsedData, setParsedData] = useState([]);
   const [isParsed, setIsParsed] = useState(false);
@@ -32,7 +32,6 @@ function HRDashboard({ onStart, onBack }) {
       setParsedData(response.data.resumeData);
       setIsParsed(true);
     } catch (error) {
-      console.error('Error uploading resumes:', error);
       setErrorMessage(
         error.response?.data?.details
           ? `Failed to parse resumes: ${error.response.data.details}`
@@ -42,6 +41,7 @@ function HRDashboard({ onStart, onBack }) {
       setIsLoading(false);
     }
   };
+
 
   const handleProceed = () => {
     onStart({ resumeData: parsedData, jobDescription, employeeCount });
@@ -64,6 +64,7 @@ function HRDashboard({ onStart, onBack }) {
       setEmployeeCount(value);
     }
   };
+
 
   return (
     <div className="hr-dashboard">
@@ -112,7 +113,7 @@ function HRDashboard({ onStart, onBack }) {
             'Parse Resumes'
           )}
         </button>
-        <button onClick={onBack}>Back to Home</button>
+        <button onClick={onBack}>Back to Home</button> {/* Back Button */}
       </div>
 
       {errorMessage && (
@@ -134,9 +135,6 @@ function HRDashboard({ onStart, onBack }) {
           ) : (
             <p>No data parsed.</p>
           )}
-          <button onClick={handleProceed} disabled={!parsedData.length}>
-            Proceed to Interview
-          </button>
         </div>
       )}
     </div>

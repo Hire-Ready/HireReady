@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Typewriter } from 'react-simple-typewriter';
 import "./HeroSection.css";
@@ -6,15 +6,18 @@ import rocketIcon from "../assets/rocket-icon.png";
 import searchIcon from "../assets/search-icon.png";
 import studentIcon from "../assets/student.png";
 import hrIcon from "../assets/hr.png";
+import HRDashboard from "./HRDashboard/HRDashboard"; // Ensure correct import
 
 const HeroSection = () => {
+  const [showHRDashboard, setShowHRDashboard] = useState(false);
+
   const bounceAnimation = {
     y: [0, 19, 0],
     transition: {
       duration: 3.5,
       repeat: Infinity,
       ease: "easeInOut",
-      repeatType: "mirror"
+      repeatType: "mirror",
     },
   };
 
@@ -36,41 +39,43 @@ const HeroSection = () => {
       buttonClass: "talent-btn",
       animatedIcon: hrIcon,
       iconClass: "hr-icon",
+      onClick: () => setShowHRDashboard(true), // Set state to show HRDashboard
     },
   ];
+
+  if (showHRDashboard) {
+    return <HRDashboard onBack={() => setShowHRDashboard(false)} />; // Show HRDashboard and handle back
+  }
 
   return (
     <div className="hero-section">
       {cardData.map((card, index) => (
         <motion.div
-        className="card"
-        key={index}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}  // Change y: 1 to y: 0
-        transition={{ duration: 0 }} // Added easing for smoothness
-        whileHover={{ y: -5 }}
-      >
-      
-      
+          className="card"
+          key={index}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0 }}
+          whileHover={{ y: -5 }}
+        >
           <div className="card-content">
             <h1>
-            <Typewriter
-            words={[card.title]}
-            cursor
-            cursorStyle="|"
-            typeSpeed={100}
-            deleteSpeed={50}
-            delaySpeed={2000}
-            loop={1} 
-            />
-
+              <Typewriter
+                words={[card.title]}
+                cursor
+                cursorStyle="|"
+                typeSpeed={100}
+                deleteSpeed={50}
+                delaySpeed={2000}
+                loop={1}
+              />
             </h1>
             <p>{card.description}</p>
-            <button className={card.buttonClass}>
+            <button className={card.buttonClass} onClick={card.onClick}>
               <img src={card.buttonIcon} alt={`${card.buttonText} Icon`} className="btn-icon" />
               {card.buttonText}
             </button>
-            
+
             <motion.img
               src={card.animatedIcon}
               alt={`${card.title} Icon`}
