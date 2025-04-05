@@ -19,13 +19,6 @@ import FeedbackScreen from './components/FeedbackScreen/FeedbackScreen';
 function App() {
 
   const [step, setStep] = useState('landing');
-
-
-
-
-
-
-
   const [interviewConfig, setInterviewConfig] = useState({});
   const [responses, setResponses] = useState([]);
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -109,7 +102,6 @@ function App() {
 
         {showBackToTop && (
           <button className="back-to-top" onClick={scrollToTop} aria-label="Back to Top">
-            ↑
           </button>
         )}
       </div>
