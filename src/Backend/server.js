@@ -1,4 +1,5 @@
 // src/Backend/server.js
+require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const pdfParse = require('pdf-parse');
@@ -11,7 +12,7 @@ app.use(express.json());
 
 // Enable CORS to allow communication with the React frontend
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3001'); // React app URL
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5001'); // or 3001 if frontend is on that
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
@@ -61,4 +62,5 @@ app.post('/feedback', (req, res) => {
   res.json({ feedback });
 });
 
-app.listen(3000, () => console.log('Server running on port 3000'));
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -25,9 +25,9 @@ function HRDashboard({ onStart, onBack }) {
     });
 
     try {
-      const response = await axios.post('http://localhost:3000/upload-resumes', formData, {
+      const response = await axios.post('http://localhost:5001/upload-resumes', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      });      
       setParsedData(response.data.resumeData);
       setIsParsed(true);
     } catch (error) {
@@ -35,7 +35,7 @@ function HRDashboard({ onStart, onBack }) {
       setErrorMessage(
         error.response?.data?.details
           ? `Failed to parse resumes: ${error.response.data.details}`
-          : 'Failed to parse resumes. Please ensure the backend server is running on port 3000.'
+          : 'Failed to parse resumes. Please ensure the backend server is running on port 5001.'
       );
     }
   };
