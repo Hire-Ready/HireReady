@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './HRDashboard.css';
 
-function HRDashboard({ onBack }) {  // Receive onBack prop
+function HRDashboard({ onBack, onStart }) {
   const [resumes, setResumes] = useState([]);
   const [parsedData, setParsedData] = useState([]);
   const [isParsed, setIsParsed] = useState(false);
@@ -42,16 +42,13 @@ function HRDashboard({ onBack }) {  // Receive onBack prop
     }
   };
 
-
   const handleProceed = () => {
     onStart({ resumeData: parsedData, jobDescription, employeeCount });
   };
 
   const handlePaste = () => {
     navigator.clipboard.readText()
-      .then(text => {
-        setJobDescription(text);
-      })
+      .then(text => setJobDescription(text))
       .catch(err => {
         console.error('Failed to paste: ', err);
         setErrorMessage('Failed to paste from clipboard');
@@ -65,23 +62,20 @@ function HRDashboard({ onBack }) {  // Receive onBack prop
     }
   };
 
-
   return (
     <div className="hr-dashboard">
       <h2>HR Dashboard</h2>
-      
+
       <label>
         Job Description:
         <div className="job-description-wrapper">
-          <textarea 
+          <textarea
             className="job-description"
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
             placeholder="Enter or paste job description here..."
           />
-          <button className="paste-button" onClick={handlePaste}>
-            Paste
-          </button>
+          <button className="paste-button" onClick={handlePaste}>Paste</button>
         </div>
       </label>
 
@@ -105,15 +99,14 @@ function HRDashboard({ onBack }) {  // Receive onBack prop
 
       <div className="button-group">
         <button onClick={handleParse} disabled={!resumes.length || isLoading}>
-          {isLoading ? (
-            <>
-              <span className="spinner"></span> Parsing...
-            </>
-          ) : (
-            'Parse Resumes'
-          )}
+          {isLoading ? (<><span className="spinner"></span> Parsing...</>) : 'Parse Resumes'}
         </button>
-        <button onClick={onBack}>Back to Home</button> {/* Back Button */}
+
+        {isParsed && parsedData.length > 0 && (
+          <button onClick={handleProceed}>Proceed</button>
+        )}
+
+        <button onClick={onBack}>Back to Home</button>
       </div>
 
       {errorMessage && (
