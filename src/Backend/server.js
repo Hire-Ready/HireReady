@@ -1,21 +1,21 @@
-// src/Backend/server.js
 require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const pdfParse = require('pdf-parse');
 const Tesseract = require('tesseract.js');
 const fs = require('fs');
+const cors = require('cors');
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 
 app.use(express.json());
 
-// Enable CORS to allow communication with the React frontend
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5001'); // or 3001 if frontend is on that
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
+// Enable CORS for frontend (React on port 3000)
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+  })
+);
 
 // Endpoint to handle resume uploads
 app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
@@ -26,11 +26,9 @@ app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
         const pdfData = await pdfParse(fileBuffer);
         let extractedText = pdfData.text;
 
-        // If extraction is poor, use Tesseract OCR
+        // Fallback to Tesseract if text extraction is poor
         if (!extractedText || extractedText.trim().length < 50) {
-          const ocrResult = await Tesseract.recognize(file.path, 'eng', {
-            logger: (m) => console.log(m),
-          });
+          const ocrResult = await Tesseract.recognize(file.path, 'eng');
           extractedText = ocrResult.data.text;
         }
 
@@ -39,6 +37,7 @@ app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
         return extractedText;
       })
     );
+
     res.json({ resumeData });
   } catch (error) {
     console.error('Error processing resumes:', error);
@@ -46,21 +45,28 @@ app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
   }
 });
 
-// Endpoint to generate questions
+// Endpoint to generate interview questions
 app.post('/questions', (req, res) => {
-  const { type, difficulty, resumeData } = req.body;
+  const { resumeData } = req.body;
   const questions = resumeData
-    ? resumeData.map((resume) => `Tell me about your experience mentioned in your resume: ${resume.slice(0, 100)}...`)
+    ? resumeData.map(
+        (resume) =>
+          `Tell me about your experience mentioned in your resume: ${resume.slice(0, 100)}...`
+      )
     : ['Tell me about yourself.', 'Why do you want this job?'];
+
   res.json({ questions });
 });
 
 // Endpoint to generate feedback
 app.post('/feedback', (req, res) => {
   const { responses } = req.body;
-  const feedback = responses.length > 0 ? 'Your answers were detailed, but try to be more concise.' : 'Please provide more detailed answers.';
+  const feedback =
+    responses.length > 0
+      ? 'Your answers were detailed, but try to be more concise.'
+      : 'Please provide more detailed answers.';
   res.json({ feedback });
 });
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
