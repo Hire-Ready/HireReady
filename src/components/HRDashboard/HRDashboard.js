@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './HRDashboard.css';
+import { useNavigate } from 'react-router-dom';
 
 function HRDashboard({ onStart, onBack }) {
   const [resumes, setResumes] = useState([]);
@@ -10,7 +11,9 @@ function HRDashboard({ onStart, onBack }) {
   const [isLoading, setIsLoading] = useState(false);
   const [jobDescription, setJobDescription] = useState('');
   const [employeeCount, setEmployeeCount] = useState('1');
-  const [role, setRole] = useState(''); // ✅ Added missing role state
+  const [role, setRole] = useState('');
+  const [existingQuestions, setExistingQuestions] = useState(['Tell me about yourself.', 'Why do you want this job?']);
+  const navigate = useNavigate();
 
   const handleFileUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -32,7 +35,7 @@ function HRDashboard({ onStart, onBack }) {
       const response = await axios.post('http://localhost:3001/upload-resumes', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      setParsedData(response.data.resumeData);
+      setParsedData(response.data.resumeData || []);
       setIsParsed(true);
     } catch (error) {
       console.error('Error uploading resumes:', error);
@@ -63,6 +66,27 @@ function HRDashboard({ onStart, onBack }) {
     const value = e.target.value;
     if (value === '' || (Number(value) >= 1 && !isNaN(value))) {
       setEmployeeCount(value);
+    }
+  };
+
+  const handleExistingQuestionsChange = (e) => {
+    const questions = e.target.value.split('\n').filter(q => q.trim());
+    setExistingQuestions(questions.length ? questions : ['Tell me about yourself.', 'Why do you want this job?']);
+  };
+
+  const goToInterviewScreen = () => {
+    if (isParsed && jobDescription && role) {
+      navigate('/interview', { 
+        state: { 
+          resumeData: parsedData, 
+          jobDescription, 
+          employeeCount, 
+          role,
+          existingQuestions
+        } 
+      });
+    } else {
+      setErrorMessage('Please parse resumes, enter job description, and role before proceeding.');
     }
   };
 
@@ -113,11 +137,24 @@ function HRDashboard({ onStart, onBack }) {
       </label>
       <p>{resumes.length} resume(s) selected</p>
 
+      <label>
+        Existing Questions (one per line):
+        <textarea
+          className="existing-questions"
+          value={existingQuestions.join('\n')}
+          onChange={handleExistingQuestionsChange}
+          placeholder="Enter existing questions here (one per line)..."
+        />
+      </label>
+
       <div className="button-group">
         <button onClick={handleParse} disabled={!resumes.length || isLoading}>
           {isLoading ? (<><span className="spinner"></span> Parsing...</>) : 'Parse Resumes'}
         </button>
         <button onClick={onBack}>Back to Home</button>
+        <button onClick={goToInterviewScreen} disabled={!isParsed || !jobDescription || !role}>
+          Interview Screen
+        </button>
       </div>
 
       {errorMessage && (
