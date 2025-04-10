@@ -1,3 +1,4 @@
+// src/backend/server.js
 require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
@@ -5,6 +6,7 @@ const pdfParse = require('pdf-parse');
 const Tesseract = require('tesseract.js');
 const fs = require('fs');
 const cors = require('cors');
+const axios = require('axios');
 const { generateQuestions } = require('./ai/ollamaClient'); // Import the AI client
 const app = express();
 const upload = multer({ dest: 'uploads/' });
