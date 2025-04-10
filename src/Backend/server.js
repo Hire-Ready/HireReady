@@ -1,3 +1,4 @@
+// server.js
 require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
@@ -53,9 +54,9 @@ app.post('/questions', async (req, res) => {
       employeeCount: employeeCount || 'Not provided',
       role: role || 'Not provided',
       resumeDataCount: safeResumeData.length,
-      existingQuestionsCount: safeExistingQuestions.length
+      existingQuestionsCount: safeExistingQuestions.length,
     });
-    
+
     const questions = await generateQuestions({
       jobDescription: jobDescription || 'Not provided',
       employeeCount: employeeCount || 'Not provided',
@@ -63,14 +64,20 @@ app.post('/questions', async (req, res) => {
       resumeData: safeResumeData,
       existingQuestions: safeExistingQuestions,
     });
-    
+
     console.log('Questions generated successfully:', questions);
     res.json({ questions });
   } catch (error) {
     console.error('Error generating questions with Ollama:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Failed to generate questions',
-      questions: ['Tell me about yourself.', 'Why do you want this job?', 'What are your strengths?', 'What are your weaknesses?', 'Where do you see yourself in 5 years?'] 
+      questions: [
+        'Can you describe your experience with Android development?',
+        'How do you approach debugging an Android app?',
+        'What Android SDK tools have you used in your projects?',
+        'Tell me about a challenging Android project you worked on.',
+        'Why are you interested in this Android development role?',
+      ],
     });
   }
 });
@@ -84,7 +91,6 @@ app.post('/feedback', (req, res) => {
   res.json({ feedback });
 });
 
-// Simple test endpoint to check connectivity with Ollama
 app.get('/test-ollama', async (req, res) => {
   try {
     const response = await axios.get('http://localhost:11434/api/tags');
