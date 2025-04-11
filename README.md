@@ -1,70 +1,162 @@
-# Getting Started with Create React App
+# 🚀 HireReady - Your Ultimate Interview Preparation Platform
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<div align="center">
 
-## Available Scripts
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Ollama](https://img.shields.io/badge/Ollama-FF6B6B?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.ai)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-In the project directory, you can run:
+</div>
 
-### `npm start`
+## 📋 Table of Contents
+- [✨ Features](#-features)
+- [🚀 Getting Started](#-getting-started)
+- [⚙️ Installation](#️-installation)
+- [🤖 AI Integration](#-ai-integration)
+- [💻 Usage](#-usage)
+- [🧪 Testing](#-testing)
+- [📦 Deployment](#-deployment)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [👥 Authors](#-authors)
 
-Runs the app in the development mode.\
+## ✨ Features
+
+- 🎯 **Smart Interview Preparation**
+- 🤖 **AI-Powered Question Generation** (Powered by Ollama)
+- 📊 **Real-time Performance Analytics**
+- 🎤 **AI-Powered Mock Interviews**
+- 📱 **Responsive Design**
+- 🔒 **Secure Authentication**
+- 📝 **Interactive Coding Challenges**
+- 🎨 **Modern UI/UX**
+- 📄 **Resume Analysis & OCR**
+- 💬 **Intelligent Feedback System**
+
+## 🚀 Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+- Node.js (v14 or higher)
+- npm or yarn
+- Git
+- Ollama (for AI features)
+
+## ⚙️ Installation
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/yourusername/hireready.git
+cd hireready
+```
+
+2. **Install dependencies**
+```bash
+npm install
+# or
+yarn install
+```
+
+3. **Install Ollama**
+```bash
+# For macOS
+brew install ollama
+
+# For Linux
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# For Windows
+# Download from https://ollama.ai/download
+```
+
+4. **Pull the required Ollama model**
+```bash
+ollama pull deepseek-r1:1.5b
+```
+
+5. **Start the development server**
+```bash
+npm start
+# or
+yarn start
+```
+
+## 🤖 AI Integration
+
+HireReady leverages Ollama's powerful AI capabilities for:
+
+- **Smart Question Generation**: Automatically generates relevant interview questions based on job descriptions and resumes
+- **Interview Feedback**: Provides detailed, AI-powered feedback on interview responses
+- **Resume Analysis**: Extracts and analyzes information from resumes using OCR and AI
+- **Performance Analytics**: Generates insights and recommendations based on interview performance
+
+### AI Features
+
+- **Question Generation**: Uses Ollama's deepseek-r1:1.5b model to create context-aware interview questions
+- **Feedback System**: Provides detailed, structured feedback on interview responses
+- **Resume Processing**: Combines OCR and AI to extract and analyze resume content
+- **Smart Scoring**: AI-powered evaluation of interview responses
+
+## 💻 Usage
+
+### Development Mode
+```bash
+npm start
+```
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Production Build
+```bash
+npm run build
+```
 
-### `npm test`
+### Testing
+```bash
+npm test
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🧪 Testing
 
-### `npm run build`
+We use Jest and React Testing Library for our test suite. Run the following command to execute tests:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm test
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 📦 Deployment
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The application can be deployed to any static hosting service. We recommend:
 
-### `npm run eject`
+- [Vercel](https://vercel.com)
+- [Netlify](https://www.netlify.com)
+- [AWS Amplify](https://aws.amazon.com/amplify/)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🤝 Contributing
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+We love contributions! Please read our [Contributing Guide](CONTRIBUTING.md) to learn about our development process and how to propose bug fixes and improvements.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🙏 Acknowledgments
 
-## Learn More
+- [Ollama](https://ollama.ai) for providing powerful AI capabilities
+- [React](https://reactjs.org) for the amazing frontend framework
+- [Node.js](https://nodejs.org) for the robust backend
+- All contributors and supporters of the project
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+<div align="center">
+  
+Made with ❤️ by the HireReady Team
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+</div>
