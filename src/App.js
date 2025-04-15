@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import './App.css';
 import Navbar from './components/Navbar';
@@ -18,29 +18,30 @@ import InterviewScreen from './components/InterviewScreen/InterviewScreen';
 import FeedbackScreen from './components/FeedbackScreen/FeedbackScreen';
 
 function App() {
+  const navigate = useNavigate();
   const [interviewConfig, setInterviewConfig] = React.useState({});
-  const [responses, setResponses] = React.useState([]);
+  const [responses, setResponses] = React.useState(null);
   const [showBackToTop, setShowBackToTop] = React.useState(false);
 
   const handleHRStart = (config) => {
     setInterviewConfig(config);
-    window.history.pushState(null, '', '/interview');
+    navigate('/interview');
   };
 
   const handleCandidateStart = (config) => {
     setInterviewConfig(config);
-    window.history.pushState(null, '', '/interview');
+    navigate('/interview');
   };
 
   const handleFinish = (userResponses) => {
     setResponses(userResponses);
-    window.history.pushState(null, '', '/feedback');
+    navigate('/feedback');
   };
 
   const handleBackToLanding = () => {
     setInterviewConfig({});
     setResponses([]);
-    window.history.pushState(null, '', '/');
+    navigate('/');
   };
 
   React.useEffect(() => {
@@ -71,14 +72,14 @@ function App() {
       <ParticlesBackground />
       <div className="app-content">
         <Navbar 
-          onHRClick={() => window.history.pushState(null, '', '/hr')} 
-          onCandidateClick={() => window.history.pushState(null, '', '/setup')} 
+          onHRClick={() => navigate('/hr')} 
+          onCandidateClick={() => navigate('/setup')} 
         />
 
         <main className="main-content">
           <Routes>
             <Route path="/" element={
-              <>
+              <React.Fragment>
                 <motion.section 
                   initial="initial"
                   animate="animate"
@@ -158,7 +159,7 @@ function App() {
                 >
                   <End />
                 </motion.section>
-              </>
+              </React.Fragment>
             } />
             <Route path="/hr" element={
               <motion.div 
