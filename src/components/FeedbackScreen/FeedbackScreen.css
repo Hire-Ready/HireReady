@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .feedback-screen h2 {
@@ -15,20 +15,28 @@
   color: #2d3748;
   margin-bottom: 30px;
   text-align: center;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.feedback-screen h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.feedback-screen h4 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 10px;
 }
 
 .feedback-screen p {
   font-size: 1.2rem;
   color: #4a5568;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
-  width: 100%;
-  margin-bottom: 30px;
-  text-align: center;
+  line-height: 1.6;
 }
 
 .feedback-screen button {
@@ -40,9 +48,280 @@
   cursor: pointer;
   background-color: #4c51bf;
   color: white;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+  box-shadow: 0 4px 6px rgba(76, 81, 191, 0.2);
 }
 
 .feedback-screen button:hover {
   background-color: #5a67d8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(76, 81, 191, 0.3);
+}
+
+.feedback-screen button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(76, 81, 191, 0.2);
+}
+
+/* Feedback header with score and summary */
+.feedback-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+@media (min-width: 768px) {
+  .feedback-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+}
+
+/* Score display */
+.score-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px;
+}
+
+@media (min-width: 768px) {
+  .score-container {
+    margin-bottom: 0;
+    margin-right: 30px;
+    flex-shrink: 0;
+  }
+}
+
+.score-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0 15px 0;
+  transition: all 0.3s ease;
+  color: white;
+  position: relative;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.score-value {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.score-max {
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+.score-label {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* Overall feedback */
+.overall-feedback {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.overall-feedback h3 {
+  text-align: left;
+  margin-bottom: 15px;
+  color: #2d3748;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 10px;
+}
+
+.overall-feedback p {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 0;
+  text-align: left;
+}
+
+/* Question feedback container */
+.question-feedback-container {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 30px;
+}
+
+.question-feedback-container h3 {
+  margin-bottom: 25px;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.question-feedback-container h3:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background-color: #4c51bf;
+  border-radius: 3px;
+}
+
+/* Question feedback cards */
+.question-feedback-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  margin-bottom: 25px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.question-feedback-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.question-number {
+  background-color: #4c51bf;
+  color: white;
+  padding: 10px 15px;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.question-text {
+  padding: 20px;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #2d3748;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+}
+
+.answer-summary, .feedback-summary {
+  padding: 20px;
+}
+
+.answer-summary h4, .feedback-summary h4 {
+  color: #4c51bf;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.answer-text {
+  font-style: italic;
+  color: #718096;
+  background-color: #f7fafc;
+  padding: 15px;
+  border-radius: 6px;
+  border-left: 3px solid #cbd5e0;
+}
+
+.feedback-summary {
+  background-color: #f0f4f8;
+}
+
+.feedback-summary p {
+  color: #2d3748;
+  font-weight: 500;
+}
+
+/* Loading spinner */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  width: 100%;
+  max-width: 800px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border-left-color: #4c51bf;
+  animation: spin 1s linear infinite;
+  margin: 20px 0;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error message */
+.error-message {
+  background-color: #fed7d7;
+  border: 1px solid #f56565;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 4px 6px rgba(245, 101, 101, 0.1);
+}
+
+.error-message p {
+  color: #c53030;
+  margin-bottom: 0;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .feedback-screen h2 {
+    font-size: 2rem;
+  }
+  
+  .feedback-screen h3 {
+    font-size: 1.5rem;
+  }
+  
+  .score-circle {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .score-value {
+    font-size: 2.5rem;
+  }
+  
+  .score-label {
+    font-size: 1.2rem;
+  }
+  
+  .question-text {
+    font-size: 1.1rem;
+  }
 }
