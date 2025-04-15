@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './HRDashboard.css';
 
-function HRDashboard({ onBack }) {  // Receive onBack prop
+function HRDashboard({ onStart, onBack }) {
   const [resumes, setResumes] = useState([]);
   const [parsedData, setParsedData] = useState([]);
   const [isParsed, setIsParsed] = useState(false);
@@ -32,6 +32,7 @@ function HRDashboard({ onBack }) {  // Receive onBack prop
       setParsedData(response.data.resumeData);
       setIsParsed(true);
     } catch (error) {
+      console.error('Error uploading resumes:', error);
       setErrorMessage(
         error.response?.data?.details
           ? `Failed to parse resumes: ${error.response.data.details}`
@@ -42,9 +43,12 @@ function HRDashboard({ onBack }) {  // Receive onBack prop
     }
   };
 
-
   const handleProceed = () => {
-    onStart({ resumeData: parsedData, jobDescription, employeeCount });
+    if (onStart) { // Check if onStart exists before calling
+      onStart({ resumeData: parsedData, jobDescription, employeeCount });
+    } else {
+      console.warn('onStart prop is not provided');
+    }
   };
 
   const handlePaste = () => {
@@ -64,7 +68,6 @@ function HRDashboard({ onBack }) {  // Receive onBack prop
       setEmployeeCount(value);
     }
   };
-
 
   return (
     <div className="hr-dashboard">
@@ -113,7 +116,7 @@ function HRDashboard({ onBack }) {  // Receive onBack prop
             'Parse Resumes'
           )}
         </button>
-        <button onClick={onBack}>Back to Home</button> {/* Back Button */}
+        <button onClick={onBack}>Back to Home</button>
       </div>
 
       {errorMessage && (
@@ -135,6 +138,9 @@ function HRDashboard({ onBack }) {  // Receive onBack prop
           ) : (
             <p>No data parsed.</p>
           )}
+          <button onClick={handleProceed} disabled={!parsedData.length}>
+            Proceed to Interview
+          </button>
         </div>
       )}
     </div>
