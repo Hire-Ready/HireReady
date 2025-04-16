@@ -1,3 +1,4 @@
+// server.js
 require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
@@ -5,15 +6,27 @@ const pdfParse = require('pdf-parse');
 const Tesseract = require('tesseract.js');
 const fs = require('fs');
 const cors = require('cors');
-const axios = require('axios');
 const nodemailer = require('nodemailer');
-const { generateQuestions } = require('./ai/ollamaClient'); // Import the AI client
+const axios = require('axios');
+const http = require('http');
+const socketIo = require('socket.io');
+const { generateQuestions, processConversation } = require('./ai/ollamaClient'); // Import the AI client
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 const upload = multer({ dest: 'uploads/' });
+
 app.use(express.json());
-app.use(cors({
-  origin: 'http://localhost:3000',
-}));
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+  })
+);
 
 // Check if email credentials exist
 const hasEmailCredentials = process.env.EMAIL_USER && process.env.EMAIL_PASSWORD;
@@ -83,6 +96,7 @@ app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
         const fileBuffer = fs.readFileSync(file.path);
         const pdfData = await pdfParse(fileBuffer);
         let extractedText = pdfData.text;
+
         if (!extractedText || extractedText.trim().length < 50) {
           const ocrResult = await Tesseract.recognize(file.path, 'eng');
           extractedText = ocrResult.data.text;
@@ -171,10 +185,11 @@ app.post('/send-interview-invites', async (req, res) => {
 
 app.post('/questions', async (req, res) => {
   console.log('Received request for questions');
-  const { resumeData, jobDescription, employeeCount, role, existingQuestions, candidateId } = req.body;
+  const { resumeData, jobDescription, employeeCount, role, existingQuestions } = req.body;
+
   const safeResumeData = Array.isArray(resumeData) ? resumeData : [];
   const safeExistingQuestions = Array.isArray(existingQuestions) ? existingQuestions : [];
-  
+
   try {
     console.log('Generating questions with parameters:', {
       jobDescription: jobDescription?.substring(0, 50) + '...' || 'Not provided',
@@ -182,45 +197,297 @@ app.post('/questions', async (req, res) => {
       role: role || 'Not provided',
       resumeDataCount: safeResumeData.length,
       existingQuestionsCount: safeExistingQuestions.length,
-      candidateId: candidateId !== undefined ? candidateId : 'Not provided'
     });
 
-    // If candidateId is provided, use the specific resume for that candidate
-    const targetResume = candidateId !== undefined && candidateId < safeResumeData.length 
-      ? [safeResumeData[candidateId]]
-      : safeResumeData;
-    
     const questions = await generateQuestions({
       jobDescription: jobDescription || 'Not provided',
       employeeCount: employeeCount || 'Not provided',
       role: role || 'Not provided',
-      resumeData: targetResume,
+      resumeData: safeResumeData,
       existingQuestions: safeExistingQuestions,
     });
-    
+
     console.log('Questions generated successfully:', questions);
     res.json({ questions });
   } catch (error) {
     console.error('Error generating questions with Ollama:', error);
     res.status(500).json({
       error: 'Failed to generate questions',
-      questions: ['Tell me about yourself.', 'Why do you want this job?', 'What are your strengths?', 'What are your weaknesses?', 'Where do you see yourself in 5 years?']
+      questions: [
+        'Can you describe your experience with Android development?',
+        'How do you approach debugging an Android app?',
+        'What Android SDK tools have you used in your projects?',
+        'Tell me about a challenging Android project you worked on.',
+        'Why are you interested in this Android development role?',
+      ],
     });
   }
 });
 
-app.post('/feedback', (req, res) => {
-  const { responses, candidateId, candidateInfo } = req.body;
+app.post('/feedback', async (req, res) => {
+  const { responses, candidateId, candidateInfo, role } = req.body;
   
-  // You can customize the feedback based on candidate info if available
-  const feedback = candidateInfo 
-    ? `Thank you for your interview for the position. We'll review your responses and get back to you at ${candidateInfo.email}.`
-    : 'Thank you for completing the interview. We will review your responses and contact you shortly.';
-  
-  res.json({ feedback });
+  try {
+    // Generate a score based on the responses
+    let overallScore = 0;
+    let detailedFeedback = '';
+    let parameterScores = {};
+    let expectedAnswers = [];
+    
+    if (responses && responses.answers && responses.answers.length > 0) {
+      // Process each answer to get structured feedback and scores
+      const answerEvaluations = await Promise.all(responses.answers.map(async (answer, index) => {
+        try {
+          // Use Ollama to evaluate the answer if it's substantial
+          if (answer && answer.length > 10) {
+            const evaluation = await processConversation({
+              text: answer,
+              context: {
+                currentQuestion: responses.questions[index] || `Question ${index + 1}`,
+                history: []
+              },
+              role: role || 'candidate',
+              jobDescription: 'Evaluating interview response'
+            });
+            
+            // Parse the structured evaluation response
+            const parsedEvaluation = parseStructuredEvaluation(evaluation);
+            
+            return {
+              ...parsedEvaluation,
+              rawFeedback: evaluation,
+              questionIndex: index
+            };
+          }
+          return { 
+            score: 0, 
+            feedback: 'No substantial answer provided.',
+            parameters: {
+              relevance: { score: 0, justification: 'No substantial answer provided.' },
+              technicalAccuracy: { score: 0, justification: 'No substantial answer provided.' },
+              depthOfKnowledge: { score: 0, justification: 'No substantial answer provided.' },
+              communicationClarity: { score: 0, justification: 'No substantial answer provided.' },
+              problemSolvingApproach: { score: 0, justification: 'No substantial answer provided.' }
+            },
+            questionIndex: index
+          };
+        } catch (error) {
+          console.error(`Error evaluating answer ${index + 1}:`, error);
+          return { 
+            score: 0, 
+            feedback: 'Could not evaluate this answer.',
+            parameters: {},
+            questionIndex: index
+          };
+        }
+      }));
+      
+      // Generate expected answers for each question
+      expectedAnswers = await Promise.all(responses.questions.map(async (question, index) => {
+        try {
+          const expectedAnswer = await processConversation({
+            text: `Provide a model answer or ideal response for the interview question: "${question}"`,
+            context: {
+              history: []
+            },
+            role: 'interviewer',
+            jobDescription: 'Generating expected answer for interview question'
+          });
+          return expectedAnswer;
+        } catch (error) {
+          console.error(`Error generating expected answer for question ${index + 1}:`, error);
+          return 'No expected answer available.';
+        }
+      }));
+      
+      // Calculate average scores for each parameter across all answers
+      const parameterTotals = {
+        relevance: 0,
+        technicalAccuracy: 0,
+        depthOfKnowledge: 0,
+        communicationClarity: 0,
+        problemSolvingApproach: 0
+      };
+      
+      let validEvaluationCount = 0;
+      
+      // Sum up parameter scores from all evaluations
+      answerEvaluations.forEach(eval => {
+        if (eval.parameters && Object.keys(eval.parameters).length > 0) {
+          validEvaluationCount++;
+          
+          Object.entries(eval.parameters).forEach(([param, data]) => {
+            if (parameterTotals.hasOwnProperty(param)) {
+              parameterTotals[param] += data.score || 0;
+            }
+          });
+        }
+      });
+      
+      // Calculate average for each parameter if we have valid evaluations
+      if (validEvaluationCount > 0) {
+        Object.keys(parameterTotals).forEach(param => {
+          parameterScores[param] = {
+            score: Math.round(parameterTotals[param] / validEvaluationCount),
+            maxScore: 20
+          };
+        });
+        
+        // Calculate overall score as sum of parameter averages
+        overallScore = Object.values(parameterScores).reduce((sum, param) => sum + param.score, 0);
+      } else {
+        // Fallback if no valid evaluations
+        overallScore = 65; // Default score
+      }
+      
+      // Compile detailed feedback with structured format
+      detailedFeedback = answerEvaluations.map((eval, index) => {
+        const question = responses.questions[index] || `Question ${index + 1}`;
+        const answer = responses.answers[index] || 'No answer provided';
+        const expectedAnswer = expectedAnswers[index] || 'No expected answer available.';
+        
+        // If we have structured parameters, format them nicely
+        if (eval.parameters && Object.keys(eval.parameters).length > 0) {
+          const parameterFeedback = Object.entries(eval.parameters)
+            .map(([param, data]) => {
+              // Convert camelCase to Title Case with spaces
+              const formattedParam = param
+                .replace(/([A-Z])/g, ' $1')
+                .replace(/^./, str => str.toUpperCase());
+              
+              return `- ${formattedParam}: ${data.score}/20 - ${data.justification}`;
+            })
+            .join('\n');
+          
+          return `Question ${index + 1}: ${question}\n\nYour Answer: ${answer.substring(0, 100)}${answer.length > 100 ? '...' : ''}\n\nExpected Answer:\n${expectedAnswer}\n\nEvaluation:\n${parameterFeedback}\n\nOverall: ${eval.feedback}`;
+        }
+        
+        // Fallback for unstructured feedback
+        return `Question ${index + 1}: ${question}\n\nYour Answer: ${answer.substring(0, 100)}${answer.length > 100 ? '...' : ''}\n\nExpected Answer:\n${expectedAnswer}\n\nFeedback: ${eval.feedback}`;
+      }).join('\n\n');
+    }
+    
+    // Generate overall feedback message based on the calculated score
+    let feedbackMessage = '';
+    
+    if (overallScore >= 90) {
+      feedbackMessage = 'Excellent interview! You demonstrated strong qualifications for this position. Your responses showed exceptional technical knowledge, clear communication, and strong problem-solving abilities.';
+    } else if (overallScore >= 75) {
+      feedbackMessage = 'Very good interview. You showed good potential for this role. Your responses demonstrated solid technical understanding and good communication skills, with some areas that could be further developed.';
+    } else if (overallScore >= 60) {
+      feedbackMessage = 'Good interview. There are some areas where you could improve. Your responses showed adequate knowledge, but could benefit from more depth, clearer explanations, or more specific examples.';
+    } else {
+      feedbackMessage = 'Thank you for your interview. We recommend further preparation for future opportunities. Consider developing more detailed responses with specific examples and strengthening your technical knowledge in key areas.';
+    }
+    
+    // Add personalized closing if email is available
+    if (candidateInfo && candidateInfo.email) {
+      feedbackMessage += ` We'll review your responses and get back to you at ${candidateInfo.email}.`;
+    } else {
+      feedbackMessage += ' We will review your responses and contact you shortly.';
+    }
+    
+    res.json({ 
+      feedback: feedbackMessage,
+      score: overallScore,
+      detailedFeedback: detailedFeedback,
+      parameterScores: parameterScores
+    });
+  } catch (error) {
+    console.error('Error generating feedback:', error);
+    res.status(500).json({ 
+      feedback: 'Thank you for completing the interview. We will review your responses and contact you shortly.',
+      score: 65, // Default score
+      error: 'Error generating detailed feedback'
+    });
+  }
 });
 
-// Simple test endpoint to check connectivity with Ollama
+// Helper function to parse structured evaluation from AI response
+const parseStructuredEvaluation = (evaluationText) => {
+  try {
+    // Initialize result object
+    const result = {
+      score: 0,
+      feedback: '',
+      parameters: {}
+    };
+    
+    // Extract parameter scores section
+    const parameterScoresMatch = evaluationText.match(/PARAMETER SCORES:([\s\S]*?)(?=OVERALL ASSESSMENT:|$)/i);
+    
+    if (parameterScoresMatch && parameterScoresMatch[1]) {
+      const parameterScoresText = parameterScoresMatch[1].trim();
+      
+      // Extract individual parameter scores
+      const relevanceMatch = parameterScoresText.match(/Relevance:\s*(\d+)\/20\s*-\s*([^\n]+)/i);
+      const technicalMatch = parameterScoresText.match(/Technical Accuracy:\s*(\d+)\/20\s*-\s*([^\n]+)/i);
+      const depthMatch = parameterScoresText.match(/Depth of Knowledge:\s*(\d+)\/20\s*-\s*([^\n]+)/i);
+      const clarityMatch = parameterScoresText.match(/Communication Clarity:\s*(\d+)\/20\s*-\s*([^\n]+)/i);
+      const problemSolvingMatch = parameterScoresText.match(/Problem-Solving Approach:\s*(\d+)\/20\s*-\s*([^\n]+)/i);
+      
+      // Add each parameter to the result if found
+      if (relevanceMatch) {
+        result.parameters.relevance = {
+          score: parseInt(relevanceMatch[1], 10) || 0,
+          justification: relevanceMatch[2].trim()
+        };
+      }
+      
+      if (technicalMatch) {
+        result.parameters.technicalAccuracy = {
+          score: parseInt(technicalMatch[1], 10) || 0,
+          justification: technicalMatch[2].trim()
+        };
+      }
+      
+      if (depthMatch) {
+        result.parameters.depthOfKnowledge = {
+          score: parseInt(depthMatch[1], 10) || 0,
+          justification: depthMatch[2].trim()
+        };
+      }
+      
+      if (clarityMatch) {
+        result.parameters.communicationClarity = {
+          score: parseInt(clarityMatch[1], 10) || 0,
+          justification: clarityMatch[2].trim()
+        };
+      }
+      
+      if (problemSolvingMatch) {
+        result.parameters.problemSolvingApproach = {
+          score: parseInt(problemSolvingMatch[1], 10) || 0,
+          justification: problemSolvingMatch[2].trim()
+        };
+      }
+    }
+    
+    // Extract overall assessment
+    const overallMatch = evaluationText.match(/OVERALL ASSESSMENT:([\s\S]*?)(?=TOTAL SCORE:|$)/i);
+    if (overallMatch && overallMatch[1]) {
+      result.feedback = overallMatch[1].trim();
+    }
+    
+    // Extract total score
+    const totalScoreMatch = evaluationText.match(/TOTAL SCORE:\s*(\d+)\/100/i);
+    if (totalScoreMatch && totalScoreMatch[1]) {
+      result.score = parseInt(totalScoreMatch[1], 10) || 0;
+    } else {
+      // If no total score found, calculate from parameters
+      result.score = Object.values(result.parameters).reduce((sum, param) => sum + (param.score || 0), 0);
+    }
+    
+    return result;
+  } catch (error) {
+    console.error('Error parsing structured evaluation:', error);
+    return {
+      score: 0,
+      feedback: 'Error parsing evaluation',
+      parameters: {}
+    };
+  }
+};
 app.get('/test-ollama', async (req, res) => {
   try {
     const response = await axios.get('http://localhost:11434/api/tags');
@@ -230,5 +497,111 @@ app.get('/test-ollama', async (req, res) => {
   }
 });
 
+// Socket.io session management
+const interviewSessions = new Map();
+
+// Socket.io connection handling
+io.on('connection', (socket) => {
+  console.log('New client connected:', socket.id);
+  
+  // Initialize session data
+  interviewSessions.set(socket.id, {
+    conversationHistory: [],
+    currentQuestion: null,
+    role: null,
+    jobDescription: null
+  });
+  
+  // Handle speech-to-text data
+  socket.on('speech-to-text', async (data) => {
+    console.log('Received speech-to-text data:', data.text);
+    
+    const sessionData = interviewSessions.get(socket.id) || {
+      conversationHistory: [],
+      currentQuestion: null
+    };
+    
+    // Update session data
+    sessionData.currentQuestion = data.question;
+    sessionData.role = data.role || sessionData.role;
+    sessionData.jobDescription = data.jobDescription || sessionData.jobDescription;
+    
+    // Add to conversation history if not already there
+    const questionExists = sessionData.conversationHistory.some(
+      item => item.role === 'interviewer' && item.content === data.question
+    );
+    
+    if (!questionExists) {
+      sessionData.conversationHistory.push({
+        role: 'interviewer',
+        content: data.question,
+        questionIndex: data.questionIndex
+      });
+    }
+    
+    // Add candidate's response
+    sessionData.conversationHistory.push({
+      role: 'candidate',
+      content: data.text,
+      questionIndex: data.questionIndex
+    });
+    
+    interviewSessions.set(socket.id, sessionData);
+    
+    try {
+      // Process the response with Ollama
+      const feedback = await processConversation({
+        text: data.text,
+        context: {
+          currentQuestion: data.question,
+          history: sessionData.conversationHistory
+        },
+        role: data.role,
+        jobDescription: data.jobDescription
+      });
+      
+      console.log('AI feedback:', feedback);
+      
+      // Send the feedback to the client
+      socket.emit('ai-response', {
+        feedback,
+        questionIndex: data.questionIndex
+      });
+      
+    } catch (error) {
+      console.error('Error processing conversation:', error);
+      socket.emit('ai-response', {
+        feedback: 'I apologize, but I encountered an error processing your response. Please continue with the interview.',
+        questionIndex: data.questionIndex,
+        error: true
+      });
+    }
+  });
+  
+  // Handle interview start
+  socket.on('start-interview', (data) => {
+    console.log('Starting interview for client:', socket.id);
+    interviewSessions.set(socket.id, {
+      conversationHistory: [],
+      currentQuestion: null,
+      role: data.role,
+      jobDescription: data.jobDescription
+    });
+  });
+  
+  // Handle interview end
+  socket.on('end-interview', () => {
+    console.log('Ending interview for client:', socket.id);
+    // Could store results or perform analytics here
+    interviewSessions.delete(socket.id);
+  });
+  
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+    interviewSessions.delete(socket.id);
+  });
+});
+
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}. Access at http://localhost:${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}. Access at http://localhost:${PORT}`));

@@ -21,17 +21,12 @@ import StudentDashboard from './components/StudentDashboard/StudentDashboard';
 function App() {
   const navigate = useNavigate();
   const [interviewConfig, setInterviewConfig] = React.useState({});
-  const [responses, setResponses] = React.useState([]);
+  const [responses, setResponses] = React.useState(null);
   const [showBackToTop, setShowBackToTop] = React.useState(false);
 
   const handleHRStart = (config) => {
     setInterviewConfig(config);
-    navigate('/interview');
-  };
-
-  const handleStudentStart = (config) => {
-    setInterviewConfig(config);
-    navigate('/student');
+    window.history.pushState(null, '', '/interview');
   };
 
   const handleCandidateStart = (config) => {
@@ -79,11 +74,14 @@ function App() {
           <Routes>
             <Route path="/" element={
               <>
-                <motion.section id="hero" initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={{ duration: 0.5 }}>
-                  <HeroSection
-                    onCandidateClick={() => navigate('/student')}
-                    onHRClick={() => navigate('/hr')}
-                  />
+                <motion.section 
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  variants={pageVariants}
+                  transition={{ duration: 0.5 }}
+                >
+                  <HeroSection />
                 </motion.section>
 
                 <motion.section id="how-it-works" initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={{ duration: 0.5, delay: 0.1 }}>
@@ -113,7 +111,7 @@ function App() {
                 <motion.section id="end" initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={{ duration: 0.5, delay: 0.7 }}>
                   <End />
                 </motion.section>
-              </>
+              </React.Fragment>
             } />
 
             <Route path="/hr" element={

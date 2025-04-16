@@ -20,8 +20,11 @@
     "react-scroll": "^1.9.3",
     "react-simple-typewriter": "^5.0.1",
     "react-slick": "^0.30.3",
+    "react-speech-recognition": "^4.0.0",
     "react-tsparticles": "^2.12.2",
+    "react-webcam": "^7.2.0",
     "slick-carousel": "^1.8.1",
+    "socket.io-client": "^4.8.1",
     "tsparticles-slim": "^2.12.0"
   },
   "scripts": {
