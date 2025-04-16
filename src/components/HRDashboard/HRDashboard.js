@@ -52,7 +52,7 @@ function HRDashboard({ onStart, onBack }) {
   };
 
   const handleProceed = () => {
-    onStart({ resumeData: parsedData, jobDescription, employeeCount, role, existingQuestions });
+    onStart({ resumeData: parsedData, jobDescription, employeeCount });
   };
 
   const handlePaste = () => {
@@ -64,62 +64,15 @@ function HRDashboard({ onStart, onBack }) {
       });
   };
 
+  const handleExistingQuestionsChange = (e) => {
+    const updatedQuestions = e.target.value.split('\n');
+    setExistingQuestions(updatedQuestions);
+  };
+
   const handleEmployeeCountChange = (e) => {
     const value = e.target.value;
     if (value === '' || (Number(value) >= 1 && !isNaN(value))) {
       setEmployeeCount(value);
-    }
-  };
-
-  const handleExistingQuestionsChange = (e) => {
-    const questions = e.target.value.split('\n').filter(q => q.trim());
-    setExistingQuestions(questions.length ? questions : ['Tell me about yourself.', 'Why do you want this job?']);
-  };
-
-  const sendInterviewInvites = async () => {
-    if (!isParsed || !interviewTime || !role) {
-      setErrorMessage('Please parse resumes, enter interview time, and role before sending invites.');
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const response = await axios.post('http://localhost:3001/send-interview-invites', {
-        candidates: parsedData,
-        interviewTime,
-        role
-      });
-      
-      setEmailStatus({
-        success: true,
-        message: `Successfully sent interview invitations to ${response.data.results.filter(r => r.success).length} candidates.`,
-        details: response.data.results
-      });
-    } catch (error) {
-      console.error('Error sending interview invites:', error);
-      setEmailStatus({
-        success: false,
-        message: 'Failed to send interview invitations. Please try again.',
-        error: error.response?.data?.error || error.message
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const goToInterviewScreen = () => {
-    if (isParsed && jobDescription && role) {
-      navigate('/interview', { 
-        state: { 
-          resumeData: parsedData, 
-          jobDescription, 
-          employeeCount, 
-          role,
-          existingQuestions
-        } 
-      });
-    } else {
-      setErrorMessage('Please parse resumes, enter job description, and role before proceeding.');
     }
   };
 
@@ -197,18 +150,9 @@ function HRDashboard({ onStart, onBack }) {
           {isLoading ? (<><span className="spinner"></span> Parsing...</>) : 'Parse Resumes'}
         </button>
         <button onClick={onBack}>Back to Home</button>
-        <button onClick={goToInterviewScreen} disabled={!isParsed || !jobDescription || !role}>
+        <button onClick={handleProceed} disabled={!isParsed || !jobDescription || !role}>
           Interview Screen
         </button>
-        {isParsed && (
-          <button 
-            onClick={sendInterviewInvites} 
-            disabled={isLoading || !interviewTime || !role}
-            className="send-invites-button"
-          >
-            {isLoading ? (<><span className="spinner"></span> Sending...</>) : 'Send Interview Invites'}
-          </button>
-        )}
       </div>
 
       {errorMessage && (
@@ -249,7 +193,6 @@ function HRDashboard({ onStart, onBack }) {
           ) : (
             <p>No data parsed.</p>
           )}
-          <button onClick={handleProceed}>Proceed to Interview</button>
         </div>
       )}
     </div>

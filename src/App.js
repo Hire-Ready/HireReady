@@ -3,29 +3,28 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import './App.css';
 import Navbar from './components/Navbar';
-import HeroSection from './components/HeroSection';
-import HowItWorks from './components/HowItWorks/HowItWorks';
-import OurTeam from './components/OurTeam/OurTeam';
-import PricingPlans from './components/PricePlans/PricingPlans';
-import LatestArticles from './components/LatestArticles/LatestArticles';
-import FAQs from './components/FAQs/FAQs';
-import Contact from './components/Contact/Contact';
-import End from './components/end/End';
+import HomePage from './components/HomePage'; // ⬅️ Your home sections (Hero, Pricing, etc.)
 import ParticlesBackground from './components/ParticlesBackground';
 import HRDashboard from './components/HRDashboard/HRDashboard';
 import InterviewSetup from './components/InterviewSetup/InterviewSetup';
 import InterviewScreen from './components/InterviewScreen/InterviewScreen';
 import FeedbackScreen from './components/FeedbackScreen/FeedbackScreen';
+import StudentDashboard from './components/StudentDashboard/StudentDashboard';
 
 function App() {
   const navigate = useNavigate();
   const [interviewConfig, setInterviewConfig] = React.useState({});
-  const [responses, setResponses] = React.useState(null);
+  const [responses, setResponses] = React.useState([]);
   const [showBackToTop, setShowBackToTop] = React.useState(false);
 
   const handleHRStart = (config) => {
     setInterviewConfig(config);
     navigate('/interview');
+  };
+
+  const handleStudentStart = (config) => {
+    setInterviewConfig(config);
+    navigate('/student');
   };
 
   const handleCandidateStart = (config) => {
@@ -46,25 +45,18 @@ function App() {
 
   React.useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowBackToTop(true);
-      } else {
-        setShowBackToTop(false);
-      }
+      setShowBackToTop(window.scrollY > 300);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Animation variants for page transitions
   const pageVariants = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 }
+    exit: { opacity: 0, y: -20 },
   };
 
   return (
@@ -78,91 +70,26 @@ function App() {
 
         <main className="main-content">
           <Routes>
+            {/* ✅ Home route using short JSX fragment */}
             <Route path="/" element={
-              <React.Fragment>
-                <motion.section 
+              <>
+                <motion.div
                   initial="initial"
                   animate="animate"
                   exit="exit"
                   variants={pageVariants}
                   transition={{ duration: 0.5 }}
                 >
-                  <HeroSection />
-                </motion.section>
-                
-                <motion.section 
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  variants={pageVariants}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                >
-                  <HowItWorks />
-                </motion.section>
-                
-                <motion.section 
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  variants={pageVariants}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
-                  <OurTeam />
-                </motion.section>
-                
-                <motion.section 
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  variants={pageVariants}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                >
-                  <PricingPlans />
-                </motion.section>
-                
-                <motion.section 
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  variants={pageVariants}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                >
-                  <LatestArticles />
-                </motion.section>
-                
-                <motion.section 
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  variants={pageVariants}
-                  transition={{ duration: 0.5, delay: 0.5 }}
-                >
-                  <FAQs />
-                </motion.section>
-                
-                <motion.section 
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  variants={pageVariants}
-                  transition={{ duration: 0.5, delay: 0.6 }}
-                >
-                  <Contact />
-                </motion.section>
-                
-                <motion.section 
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  variants={pageVariants}
-                  transition={{ duration: 0.5, delay: 0.7 }}
-                >
-                  <End />
-                </motion.section>
-              </React.Fragment>
+                  <HomePage
+                    onHRClick={() => navigate('/hr')}
+                    onCandidateClick={() => navigate('/student')}
+                  />
+                </motion.div>
+              </>
             } />
+
             <Route path="/hr" element={
-              <motion.div 
+              <motion.div
                 initial="initial"
                 animate="animate"
                 exit="exit"
@@ -172,8 +99,9 @@ function App() {
                 <HRDashboard onStart={handleHRStart} onBack={handleBackToLanding} />
               </motion.div>
             } />
+
             <Route path="/setup" element={
-              <motion.div 
+              <motion.div
                 initial="initial"
                 animate="animate"
                 exit="exit"
@@ -183,8 +111,21 @@ function App() {
                 <InterviewSetup onStart={handleCandidateStart} onBack={handleBackToLanding} />
               </motion.div>
             } />
+
+            <Route path="/student" element={
+              <motion.div
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                variants={pageVariants}
+                transition={{ duration: 0.5 }}
+              >
+                <StudentDashboard onStart={handleStudentStart} onBack={handleBackToLanding} />
+              </motion.div>
+            } />
+
             <Route path="/interview" element={
-              <motion.div 
+              <motion.div
                 initial="initial"
                 animate="animate"
                 exit="exit"
@@ -194,9 +135,9 @@ function App() {
                 <InterviewScreen config={interviewConfig} onFinish={handleFinish} onBack={handleBackToLanding} />
               </motion.div>
             } />
-            {/* Add route for candidate-specific interviews */}
+
             <Route path="/interview/:candidateId" element={
-              <motion.div 
+              <motion.div
                 initial="initial"
                 animate="animate"
                 exit="exit"
@@ -206,8 +147,9 @@ function App() {
                 <InterviewScreen onFinish={handleFinish} onBack={handleBackToLanding} />
               </motion.div>
             } />
+
             <Route path="/feedback" element={
-              <motion.div 
+              <motion.div
                 initial="initial"
                 animate="animate"
                 exit="exit"

@@ -30,10 +30,7 @@ const FAQs = () => {
   return (
     <section className="faqs-section">
       <h2>Frequently Asked Questions</h2>
-      <div className="search-bar">
-        <span className="search-icon">🔍</span>
-        <input type="text" placeholder="Search questions..." disabled aria-label="Search FAQs (disabled)" />
-      </div>
+      
       <div className="faq-list">
         {faqData.map((faq) => (
           <div key={faq.id} className="faq-item">

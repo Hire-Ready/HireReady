@@ -1,55 +1,134 @@
+/* src/components/OurTeam/OurTeam.css */
 .our-team {
-
-  padding: 50px 20px;
+  padding: 60px 20px;
   text-align: center;
-  color: white;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%); /* Match StudentDashboard gradient */
+  color: #2d3748; /* Adjust text color to contrast with new background */
+  position: relative;
+  overflow: hidden;
+  min-height: 400px;
 }
 
 .our-team h2 {
-  font-size: 2.5rem;
-  margin-bottom: 40px;
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 50px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #4c51bf; /* Adjusted to match theme colors */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.team-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
 }
 
 .team-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  display: flex;
+  animation: scroll 15s linear infinite; /* Reduced from 20s to 15s for faster speed */
+  width: max-content; /* Allows the grid to expand with duplicated content */
+}
+
+.team-grid:hover {
+  animation-play-state: paused; /* Pause animation on hover */
+}
+
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* Move half the width to loop seamlessly */
 }
 
 .team-card {
-  background: #2e1a5c;
+  background: rgba(76, 81, 191, 0.1); /* Adjusted to match theme, semi-transparent */
   border-radius: 15px;
-  padding: 20px;
+  padding: 25px;
+  margin: 0 15px;
   text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Lighter shadow for new background */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-width: 200px;
+}
+
+.team-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 .team-image {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-  margin: 0 auto 10px;
-  object-fit: cover; /* Ensures the image scales properly without distortion */
-  display: block; /* Ensures proper centering with margin: 0 auto */
+  margin: 0 auto 15px;
+  object-fit: cover;
+  border: 4px solid #4c51bf; /* Adjusted border color */
+  transition: transform 0.3s ease;
+}
+
+.team-card:hover .team-image {
+  transform: scale(1.1);
 }
 
 .team-card h3 {
-  font-size: 1.2rem;
-  margin-bottom: 5px;
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+  color: #2d3748; /* Adjusted to contrast with new background */
+  font-weight: 600;
 }
 
 .team-card p {
-  font-size: 0.9rem;
-  color: #d3d3d3;
+  font-size: 1rem;
+  color: #718096; /* Adjusted for readability */
+  font-style: italic;
 }
 
 .our-journey {
-  margin-top: 20px;
+  margin-top: 40px;
 }
 
 .our-journey a {
-  color: #00aaff;
+  color: #4c51bf;
   text-decoration: none;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  padding: 10px 20px;
+  background: rgba(159, 159, 168, 0.1);
+  border-radius: 25px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.our-journey a:hover {
+  background: #4c51bf;
+  color: #ffffff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .our-team h2 {
+    font-size: 2rem;
+  }
+
+  .team-grid {
+    animation: none; /* Disable animation on small screens */
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .team-card {
+    margin: 10px;
+    min-width: 150px;
+  }
+
+  .team-image {
+    width: 100px;
+    height: 100px;
+  }
+
+  .team-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .team-card p {
+    font-size: 0.9rem;
+  }
 }

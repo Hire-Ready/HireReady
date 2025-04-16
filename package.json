@@ -17,6 +17,7 @@
     "react-router-dom": "^7.5.0",
     "react-router-hash-link": "^2.4.3",
     "react-scripts": "5.0.1",
+    "react-scroll": "^1.9.3",
     "react-simple-typewriter": "^5.0.1",
     "react-slick": "^0.30.3",
     "react-speech-recognition": "^4.0.0",
