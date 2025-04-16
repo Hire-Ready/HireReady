@@ -1,17 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Typewriter } from 'react-simple-typewriter';
+import { useNavigate } from "react-router-dom";
 import "./HeroSection.css";
-import rocketIcon from "../assets/rocket-icon.png"; // Verify this file exists
-import searchIcon from "../assets/search-icon.png"; // Verify this file exists
-import studentIcon from "../assets/student.png"; // Verify this file exists
-import hrIcon from "../assets/hr.png"; // Verify this file exists
-import HRDashboard from "../components/HRDashboard/HRDashboard"; // Verify path and export
-import StudentDashboard from "../components/StudentDashboard/StudentDashboard"; // Verify path and export
+import rocketIcon from "../assets/rocket-icon.png";
+import searchIcon from "../assets/search-icon.png";
+import studentIcon from "../assets/student.png";
+import hrIcon from "../assets/hr.png";
 
 const HeroSection = () => {
-  const [showHRDashboard, setShowHRDashboard] = useState(false);
-  const [showStudentDashboard, setShowStudentDashboard] = useState(false);
+  const navigate = useNavigate();
 
   const bounceAnimation = {
     y: [0, 19, 0],
@@ -32,7 +30,7 @@ const HeroSection = () => {
       buttonClass: "practice-btn",
       animatedIcon: studentIcon,
       iconClass: "student-icon",
-      onClick: () => setShowStudentDashboard(true),
+      onClick: () => navigate('/student'),
     },
     {
       title: "For HR Professionals",
@@ -42,17 +40,9 @@ const HeroSection = () => {
       buttonClass: "talent-btn",
       animatedIcon: hrIcon,
       iconClass: "hr-icon",
-      onClick: () => setShowHRDashboard(true),
+      onClick: () => navigate('/hr'),
     },
   ];
-
-  if (showHRDashboard) {
-    return <HRDashboard onBack={() => setShowHRDashboard(false)} />;
-  }
-
-  if (showStudentDashboard) {
-    return <StudentDashboard onBack={() => setShowStudentDashboard(false)} />;
-  }
 
   return (
     <div className="hero-section">
@@ -97,4 +87,4 @@ const HeroSection = () => {
   );
 };
 
-export default HeroSection; // Ensure this is present
+export default HeroSection;

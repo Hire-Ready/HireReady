@@ -16,7 +16,7 @@ import HRDashboard from './components/HRDashboard/HRDashboard';
 import InterviewSetup from './components/InterviewSetup/InterviewSetup';
 import InterviewScreen from './components/InterviewScreen/InterviewScreen';
 import FeedbackScreen from './components/FeedbackScreen/FeedbackScreen';
-import StudentDashboard from './components/StudentDashboard/StudentDashboard'; // Import StudentDashboard
+import StudentDashboard from './components/StudentDashboard/StudentDashboard';
 
 function App() {
   const navigate = useNavigate();
@@ -24,19 +24,16 @@ function App() {
   const [responses, setResponses] = React.useState([]);
   const [showBackToTop, setShowBackToTop] = React.useState(false);
 
-  // Handler for HR Dashboard start
   const handleHRStart = (config) => {
     setInterviewConfig(config);
     navigate('/interview');
   };
 
-  // Handler for Student Dashboard start
   const handleStudentStart = (config) => {
-    setInterviewConfig(config); // Optional: Use config if needed for student flow
+    setInterviewConfig(config);
     navigate('/student');
   };
 
-  // Handler for Candidate/Interview Setup start
   const handleCandidateStart = (config) => {
     setInterviewConfig(config);
     navigate('/interview');
@@ -83,7 +80,10 @@ function App() {
             <Route path="/" element={
               <>
                 <motion.section id="hero" initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={{ duration: 0.5 }}>
-                  <HeroSection />
+                  <HeroSection
+                    onCandidateClick={() => navigate('/student')}
+                    onHRClick={() => navigate('/hr')}
+                  />
                 </motion.section>
 
                 <motion.section id="how-it-works" initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={{ duration: 0.5, delay: 0.1 }}>
