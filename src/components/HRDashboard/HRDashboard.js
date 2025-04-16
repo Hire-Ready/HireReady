@@ -64,13 +64,17 @@ function HRDashboard({ onStart, onBack }) {
       });
   };
 
+  const handleExistingQuestionsChange = (e) => {
+    const updatedQuestions = e.target.value.split('\n');
+    setExistingQuestions(updatedQuestions);
+  };
+
   const handleEmployeeCountChange = (e) => {
     const value = e.target.value;
     if (value === '' || (Number(value) >= 1 && !isNaN(value))) {
       setEmployeeCount(value);
     }
   };
-
 
   return (
     <div className="hr-dashboard">
@@ -146,10 +150,9 @@ function HRDashboard({ onStart, onBack }) {
           {isLoading ? (<><span className="spinner"></span> Parsing...</>) : 'Parse Resumes'}
         </button>
         <button onClick={onBack}>Back to Home</button>
-        <button onClick={goToInterviewScreen} disabled={!isParsed || !jobDescription || !role}>
+        <button onClick={handleProceed} disabled={!isParsed || !jobDescription || !role}>
           Interview Screen
         </button>
-        <button onClick={onBack}>Back to Home</button> {/* Back Button */}
       </div>
 
       {errorMessage && (

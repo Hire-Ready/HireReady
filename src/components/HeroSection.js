@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Typewriter } from 'react-simple-typewriter';
 import "./HeroSection.css";
-import rocketIcon from "../assets/rocket-icon.png";
-import searchIcon from "../assets/search-icon.png";
-import studentIcon from "../assets/student.png";
-import hrIcon from "../assets/hr.png";
-import HRDashboard from "./HRDashboard/HRDashboard"; // Ensure correct import
+import rocketIcon from "../assets/rocket-icon.png"; // Verify this file exists
+import searchIcon from "../assets/search-icon.png"; // Verify this file exists
+import studentIcon from "../assets/student.png"; // Verify this file exists
+import hrIcon from "../assets/hr.png"; // Verify this file exists
+import HRDashboard from "../components/HRDashboard/HRDashboard"; // Verify path and export
+import StudentDashboard from "../components/StudentDashboard/StudentDashboard"; // Verify path and export
 
 const HeroSection = () => {
   const [showHRDashboard, setShowHRDashboard] = useState(false);
+  const [showStudentDashboard, setShowStudentDashboard] = useState(false);
 
   const bounceAnimation = {
     y: [0, 19, 0],
@@ -30,6 +32,7 @@ const HeroSection = () => {
       buttonClass: "practice-btn",
       animatedIcon: studentIcon,
       iconClass: "student-icon",
+      onClick: () => setShowStudentDashboard(true),
     },
     {
       title: "For HR Professionals",
@@ -39,12 +42,16 @@ const HeroSection = () => {
       buttonClass: "talent-btn",
       animatedIcon: hrIcon,
       iconClass: "hr-icon",
-      onClick: () => setShowHRDashboard(true), // Set state to show HRDashboard
+      onClick: () => setShowHRDashboard(true),
     },
   ];
 
   if (showHRDashboard) {
-    return <HRDashboard onBack={() => setShowHRDashboard(false)} />; // Show HRDashboard and handle back
+    return <HRDashboard onBack={() => setShowHRDashboard(false)} />;
+  }
+
+  if (showStudentDashboard) {
+    return <StudentDashboard onBack={() => setShowStudentDashboard(false)} />;
   }
 
   return (
@@ -90,4 +97,4 @@ const HeroSection = () => {
   );
 };
 
-export default HeroSection;
+export default HeroSection; // Ensure this is present
