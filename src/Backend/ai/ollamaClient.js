@@ -5,6 +5,23 @@ const path = require('path');
 
 const promptConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'promptConfig.json'), 'utf8'));
 
+// Helper function to perform axios POST with retries and exponential backoff
+const retryAxiosPost = async (url, data, options = {}, maxRetries = 3, retryDelay = 1000) => {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await axios.post(url, data, options);
+      return response;
+    } catch (error) {
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      const delay = retryDelay * Math.pow(2, attempt);
+      console.log(`Attempt ${attempt + 1} failed, retrying in ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+};
+
 // Generate the next interview question based on conversation history
 const generateNextQuestion = async ({ conversationHistory, role, jobDescription, isFirstQuestion = false }) => {
   try {
@@ -68,7 +85,7 @@ const generateNextQuestion = async ({ conversationHistory, role, jobDescription,
     };
     
     console.log('Sending request to Ollama for next question');
-    const response = await axios.post('http://localhost:11434/api/chat', prompt, {
+    const response = await retryAxiosPost('http://localhost:11434/api/chat', prompt, {
       headers: { 'Content-Type': 'application/json' },
     });
     
@@ -173,7 +190,7 @@ const processConversation = async ({ text, context, role, jobDescription }) => {
     }
     
     console.log('Sending conversation request to Ollama API...');
-    const response = await axios.post('http://localhost:11434/api/chat', prompt, {
+    const response = await retryAxiosPost('http://localhost:11434/api/chat', prompt, {
       headers: { 'Content-Type': 'application/json' },
     });
     
@@ -201,9 +218,36 @@ const processConversation = async ({ text, context, role, jobDescription }) => {
   }
 };
 
+// Helper function to extract key points from resume data
+const extractResumeSummary = (resumeData) => {
+  if (!Array.isArray(resumeData) || resumeData.length === 0) {
+    return '';
+  }
+  // Concatenate all resume texts
+  const combinedText = resumeData.map(r => r.text || '').join(' ');
+  
+  // Simple heuristic: extract sentences containing keywords like skills, experience, projects, etc.
+  const keywords = ['skill', 'experience', 'project', 'worked', 'developed', 'managed', 'led', 'designed', 'implemented', 'achieved', 'responsible'];
+  
+  // Split into sentences
+  const sentences = combinedText.match(/[^\.!\?]+[\.!\?]+/g) || [];
+  
+  // Filter sentences containing keywords
+  const keySentences = sentences.filter(sentence => {
+    const lower = sentence.toLowerCase();
+    return keywords.some(keyword => lower.includes(keyword));
+  });
+  
+  // Join top 5 key sentences as summary
+  return keySentences.slice(0, 5).join(' ');
+};
+
 // Main function to generate questions
 const generateQuestions = async ({ jobDescription, employeeCount, role, resumeData, existingQuestions }) => {
-  // Create a better prompt that emphasizes generating actual interview questions
+  // Extract summary from resumeData
+  const resumeSummary = extractResumeSummary(resumeData);
+  
+  // Create a better prompt that emphasizes generating actual interview questions tailored to resume and job description
   const prompt = {
     model: 'deepseek-r1:1.5b',
     messages: [
@@ -218,6 +262,8 @@ const generateQuestions = async ({ jobDescription, employeeCount, role, resumeDa
 Job Description: ${jobDescription}
 Required Employees: ${employeeCount}
 Role: ${role}
+
+Candidate Resume Summary: ${resumeSummary}
 
 Examples of good interview questions:
 1. What experience do you have with developing Android applications?
@@ -234,7 +280,7 @@ IMPORTANT: Only give me 5 interview questions. No explanations, no thinking, jus
 
   try {
     console.log('Sending request to Ollama API...');
-    const response = await axios.post('http://localhost:11434/api/chat', prompt, {
+    const response = await retryAxiosPost('http://localhost:11434/api/chat', prompt, {
       headers: { 'Content-Type': 'application/json' },
     });
     
