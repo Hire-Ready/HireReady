@@ -24,7 +24,7 @@ const Navbar = ({ onHRClick, onCandidateClick }) => {
             activeClass="active"
             spy={true}
             offset={-70}
-            onClick={() => setIsMobileMenuOpen(false)} // Close menu on click
+            onClick={() => setIsMobileMenuOpen(false)}
           >
             Home
           </ScrollLink>
