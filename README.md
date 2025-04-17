@@ -1,4 +1,4 @@
-# 🚀 HireReady - Your Ultimate Interview Preparation Platform hi chinmay
+# 🚀 HireReady - Your Ultimate Interview Preparation Platform 
 
 <div align="center">
 
