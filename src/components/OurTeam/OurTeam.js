@@ -6,8 +6,8 @@ const OurTeam = () => {
     { name: 'AADITYA PRAKASH', role: 'Backend Dev', image: './images/aaditya.jpg' },
     { name: 'Chinmay Patil', role: 'Backend Dev', image: './images/chinmay.jpg' },
     { name: 'RAJAS DEV', role: 'Frontend Dev', image: './images/rajas.jpg' },
-    { name: 'Yash Patel', role: 'Product Designer', image: './images/yash.jpg' },
-    { name: 'Dhyey Patel', role: 'Product Designer', image: './images/dhyey.jpg' },
+    // { name: 'Yash Patel', role: 'Product Designer', image: './images/yash.jpg' },
+    // { name: 'Dhyey Patel', role: 'Product Designer', image: './images/dhyey.jpg' },
   ];
 
   return (

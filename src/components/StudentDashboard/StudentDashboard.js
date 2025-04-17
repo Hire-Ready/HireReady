@@ -1,98 +1,94 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import './StudentDashboard.css';
 
-function StudentDashboard({ onStart, onBack }) {
-  const [resumes, setResumes] = useState([]);
-  const [parsedData, setParsedData] = useState([]);
-  const [isParsed, setIsParsed] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+const StudentDashboard = ({ onBack }) => {
+  const [file, setFile] = useState(null);
+  const [parsedData, setParsedData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [jobDescription, setJobDescription] = useState('');
+  const [role, setRole] = useState('');
+  const [error, setError] = useState('');
 
-  const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files);
-    setResumes(files);
-    setParsedData([]);
-    setIsParsed(false);
-    setErrorMessage('');
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+    setError('');
   };
 
-  const handleParse = async () => {
-    setErrorMessage('');
-    setIsLoading(true);
+  const handleParseResume = async () => {
+    if (!file) {
+      setError('Please upload a resume file first.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
     const formData = new FormData();
-    resumes.forEach((resume) => formData.append('resumes', resume));
+    formData.append('resume', file);
 
     try {
-      const response = await axios.post('http://localhost:3000/upload-resumes', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      setParsedData(response.data.resumeData);
-      setIsParsed(true);
-    } catch (error) {
-      console.error('Error uploading student resumes:', error);
-      setErrorMessage(
-        error.response?.data?.details
-          ? `Failed to parse student resumes: ${error.response.data.details}`
-          : 'Failed to parse student resumes. Ensure the backend server is running on port 3000.'
+      // Simulate API call to parse resume (replace with actual backend endpoint)
+      const response = await new Promise((resolve) =>
+        setTimeout(() => resolve({ data: { text: 'Parsed resume content for testing' } }), 2000)
       );
+      setParsedData(response.data.text);
+    } catch (err) {
+      setError('Failed to parse resume. Please try again.');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   const handleProceed = () => {
-    onStart({ resumeData: parsedData });
+    if (parsedData && jobDescription.trim() && role.trim()) {
+      // Simulate proceeding to review with job description, role, and resume data
+      console.log({ parsedData, jobDescription, role });
+      // Add navigation or further logic (e.g., to mock interview based on your AI project)
+    } else {
+      setError('Please fill in the job description, role, and parse the resume.');
+    }
   };
 
   return (
     <div className="student-dashboard">
+      <button className="back-button" onClick={onBack}>Back to Home</button>
       <h2>Student Dashboard</h2>
-      <label>
-        Upload Student Resumes:
-        <input type="file" multiple accept=".pdf" onChange={handleFileUpload} />
-      </label>
-      <p>{resumes.length} resume(s) selected</p>
-
-      <div className="button-group">
-        <button onClick={handleParse} disabled={!resumes.length || isLoading}>
-          {isLoading ? (
-            <>
-              <span className="spinner"></span> Parsing...
-            </>
-          ) : (
-            'Parse Resumes'
-          )}
-        </button>
-        <button onClick={onBack}>Back to Home</button>
-      </div>
-
-      {errorMessage && (
-        <div className="error-message">
-          <p>{errorMessage}</p>
-        </div>
-      )}
-
-      {isParsed && (
-        <div className="student-data">
-          <h3>Parsed Student Data</h3>
-          {parsedData.length > 0 ? (
-            parsedData.map((data, index) => (
-              <div key={index} className="student-item">
-                <h4>Student Resume {index + 1}</h4>
-                <pre>{JSON.stringify(data, null, 2)}</pre>
-              </div>
-            ))
-          ) : (
-            <p>No data parsed.</p>
-          )}
-          <button onClick={handleProceed} disabled={!parsedData.length}>
-            Proceed to Review
+      <div className="dashboard-content">
+        <div className="input-section">
+          <h3>Prepare for Your Interview</h3>
+          <p>Upload your resume and specify your target job to get tailored feedback.</p>
+          <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} />
+          <button onClick={handleParseResume} disabled={loading}>
+            {loading ? 'Parsing...' : 'Parse Resume'}
           </button>
+          <textarea
+            placeholder="Enter Job Description (e.g., responsibilities, skills required)"
+            value={jobDescription}
+            onChange={(e) => setJobDescription(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Enter Role (e.g., Software Engineer)"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          />
+          {error && <p className="error">{error}</p>}
+          {parsedData && (
+            <div className="parsed-data">
+              <h3>Parsed Resume Data</h3>
+              <p>{parsedData}</p>
+            </div>
+          )}
+          <div className="button-group">
+            <button onClick={handleProceed} disabled={!parsedData || !jobDescription.trim() || !role.trim()}>
+              Proceed to Review
+            </button>
+            <button className="back-button" onClick={onBack}>Back to Home</button>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
-}
+};
 
 export default StudentDashboard;

@@ -1,100 +1,249 @@
 .articles-section {
-    padding: 40px 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    background-color: #1a1a2e;
-  }
-  
-  .articles-section h2 {
-    font-size: clamp(1.5rem, 4vw, 2rem);
-    margin-bottom: 30px;
-    color: #ffffff;
-    text-align: left;
-    font-family: 'Inter', sans-serif;
-  }
-  
+  padding: 60px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); /* Matched with FAQs */
+  color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.articles-section h2 {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: 40px;
+  color: #00aaff;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.articles-section h2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background: #66fcf1;
+  transition: width 0.3s ease;
+}
+
+.articles-section h2:hover::after {
+  width: 100px;
+}
+
+.article-card {
+  background: linear-gradient(135deg, #2a2a4e 0%, #3a3a6e 100%);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0 15px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.article-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(76, 81, 191, 0.1) 0%, rgba(102, 252, 241, 0.1) 100%);
+  z-index: 0;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.article-card:hover::before {
+  opacity: 1;
+}
+
+.article-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.article-card img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.article-card:hover img {
+  transform: scale(1.05);
+}
+
+.article-card-content {
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.article-card-content h3 {
+  font-size: 14px;
+  color: #a3a3ff;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.article-card-content p {
+  font-size: 1.1rem;
+  color: #d0d0d0;
+  margin: 0 0 15px;
+  line-height: 1.6;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+
+.article-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid #4a4a8e;
+}
+
+.article-footer span {
+  font-size: 14px;
+  color: #d0d0d0;
+  font-family: 'Inter', sans-serif;
+}
+
+.read-more {
+  font-size: 14px;
+  color: #00aaff;
+  background: none;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.read-more::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, #00aaff, transparent);
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.read-more:hover {
+  color: #ffffff;
+}
+
+.read-more:hover::before {
+  left: 0;
+}
+
+.read-more:focus {
+  outline: 2px solid #00aaff;
+  outline-offset: 2px;
+}
+
+/* Slick carousel custom styles */
+.slick-prev,
+.slick-next {
+  z-index: 1;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #2a2a4e 0%, #3a3a6e 100%);
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.slick-prev:hover,
+.slick-next:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #3a3a6e 0%, #4a4a8e 100%);
+}
+
+.slick-prev:before,
+.slick-next:before {
+  color: #00aaff;
+  font-size: 24px;
+}
+
+.slick-dots li button:before {
+  color: #a3a3ff;
+  font-size: 12px;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #00aaff;
+  font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
   .article-card {
-    background-color: #2a2a4e;
-    border-radius: 10px;
-    overflow: hidden;
-    margin: 0 10px; /* Space between carousel items */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: 0 10px;
   }
-  
+}
+
+@media (max-width: 768px) {
+  .articles-section {
+    padding: 40px 15px;
+  }
+
+  .articles-section h2 {
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    margin-bottom: 30px;
+  }
+
   .article-card img {
-    width: 100%;
     height: 200px;
-    object-fit: cover;
   }
-  
+
   .article-card-content {
     padding: 15px;
   }
-  
+
   .article-card-content h3 {
-    font-size: 14px;
-    color: #a3a3ff;
-    margin: 0 0 10px;
-    text-transform: uppercase;
-    font-family: 'Inter', sans-serif;
+    font-size: 12px;
   }
-  
+
   .article-card-content p {
-    font-size: 16px;
-    color: #d0d0d0;
-    margin: 0 0 10px;
-    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
   }
-  
+
   .article-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 10px;
   }
-  
-  .article-footer span {
-    font-size: 14px;
-    color: #d0d0d0;
-  }
-  
+
   .read-more {
-    font-size: 14px;
-    color: #00aaff;
-    background: none;
-    border: none;
-    padding: 0;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s ease;
-    font-family: 'Inter', sans-serif;
+    width: 100%;
+    text-align: center;
   }
-  
-  .read-more:hover {
-    color: #a3a3ff;
-  }
-  
-  .read-more:focus {
-    outline: 2px solid #00aaff;
-    outline-offset: 2px;
-  }
-  
-  /* Slick carousel custom styles */
-  .slick-prev, .slick-next {
-    z-index: 1;
+
+  .slick-prev,
+  .slick-next {
     width: 40px;
     height: 40px;
-    background: #2a2a4e;
-    border-radius: 50%;
   }
-  
-  .slick-prev:before, .slick-next:before {
-    color: #00aaff;
+
+  .slick-prev:before,
+  .slick-next:before {
+    font-size: 20px;
   }
-  
-  .slick-dots li button:before {
-    color: #a3a3ff;
-  }
-  
-  .slick-dots li.slick-active button:before {
-    color: #00aaff;
-  }
+}
