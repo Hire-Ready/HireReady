@@ -2,11 +2,15 @@
 .our-team {
   padding: 60px 20px;
   text-align: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%); /* Match StudentDashboard gradient */
-  color: #2d3748; /* Adjust text color to contrast with new background */
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); /* Matched with other sections */
+  color: #ffffff; /* Adjusted text color for contrast with dark background */
   position: relative;
   overflow: hidden;
   min-height: 400px;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .our-team h2 {
@@ -15,8 +19,26 @@
   margin-bottom: 50px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: #4c51bf; /* Adjusted to match theme colors */
+  color: #00aaff; /* Adjusted to match theme */
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: 'Inter', sans-serif;
+  position: relative;
+}
+
+.our-team h2::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: #66fcf1;
+  transition: width 0.3s ease;
+}
+
+.our-team h2:hover::after {
+  width: 120px;
 }
 
 .team-container {
@@ -27,33 +49,52 @@
 
 .team-grid {
   display: flex;
-  animation: scroll 15s linear infinite; /* Reduced from 20s to 15s for faster speed */
-  width: max-content; /* Allows the grid to expand with duplicated content */
+  animation: scroll 15s linear infinite;
+  width: max-content;
 }
 
 .team-grid:hover {
-  animation-play-state: paused; /* Pause animation on hover */
+  animation-play-state: paused;
 }
 
 @keyframes scroll {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); } /* Move half the width to loop seamlessly */
+  100% { transform: translateX(-50%); }
 }
 
 .team-card {
-  background: rgba(76, 81, 191, 0.1); /* Adjusted to match theme, semi-transparent */
+  background: linear-gradient(135deg, #2a2a4e 0%, #3a3a6e 100%); /* Adjusted for contrast */
   border-radius: 15px;
   padding: 25px;
   margin: 0 15px;
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Lighter shadow for new background */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   min-width: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.team-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(76, 81, 191, 0.1) 0%, rgba(102, 252, 241, 0.1) 100%);
+  z-index: 0;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.team-card:hover::before {
+  opacity: 1;
 }
 
 .team-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .team-image {
@@ -62,7 +103,7 @@
   border-radius: 50%;
   margin: 0 auto 15px;
   object-fit: cover;
-  border: 4px solid #4c51bf; /* Adjusted border color */
+  border: 4px solid #00aaff; /* Adjusted border color to match theme */
   transition: transform 0.3s ease;
 }
 
@@ -73,14 +114,16 @@
 .team-card h3 {
   font-size: 1.3rem;
   margin-bottom: 8px;
-  color: #2d3748; /* Adjusted to contrast with new background */
+  color: #ffffff; /* Adjusted for dark background */
   font-weight: 600;
+  font-family: 'Inter', sans-serif;
 }
 
 .team-card p {
   font-size: 1rem;
-  color: #718096; /* Adjusted for readability */
+  color: #d0d0d0; /* Adjusted for readability on dark background */
   font-style: italic;
+  font-family: 'Inter', sans-serif;
 }
 
 .our-journey {
@@ -88,28 +131,36 @@
 }
 
 .our-journey a {
-  color: #4c51bf;
+  color: #00aaff;
   text-decoration: none;
   font-size: 1.2rem;
-  padding: 10px 20px;
-  background: rgba(159, 159, 168, 0.1);
+  padding: 12px 25px;
+  background: rgba(0, 170, 255, 0.1);
   border-radius: 25px;
   transition: background 0.3s ease, color 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .our-journey a:hover {
-  background: #4c51bf;
+  background: #00aaff;
   color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .our-team {
+    padding: 40px 15px;
+  }
+
   .our-team h2 {
     font-size: 2rem;
   }
 
   .team-grid {
-    animation: none; /* Disable animation on small screens */
+    animation: none;
     flex-wrap: wrap;
     justify-content: center;
   }
@@ -130,5 +181,10 @@
 
   .team-card p {
     font-size: 0.9rem;
+  }
+
+  .our-journey a {
+    font-size: 1.1rem;
+    padding: 10px 20px;
   }
 }
