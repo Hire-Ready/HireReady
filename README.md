@@ -1,4 +1,4 @@
-# 🚀 HireReady - Your Ultimate Interview Preparation Platform 
+# 🚀 HireReady - Your Ultimate Interview Preparation Platform
 
 <div align="center">
 
