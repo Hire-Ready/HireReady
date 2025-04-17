@@ -5,7 +5,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import './LatestArticles.css';
 import { motion } from 'framer-motion';
 
-// Static data for articles
+
 const articles = [
   {
     id: 1,

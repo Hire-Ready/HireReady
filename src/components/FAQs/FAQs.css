@@ -2,10 +2,10 @@
   padding: 60px 20px;
   max-width: 1200px;
   margin: 0 auto;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); /* Enhanced gradient */
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); /* Matched with LatestArticles */
   color: #ffffff;
   border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Deeper shadow */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
 
@@ -25,10 +25,11 @@
   content: '';
   position: absolute;
   bottom: -10px;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 50px;
   height: 3px;
-  background: #00aaff;
+  background: #66fcf1;
   transition: width 0.3s ease;
 }
 
@@ -41,7 +42,7 @@
   align-items: center;
   background: linear-gradient(90deg, #2a2a4e 0%, #3a3a6e 100%);
   border: 1px solid #4a4a8e;
-  border-radius: 25px; /* Rounded corners */
+  border-radius: 25px;
   padding: 12px 20px;
   margin-bottom: 30px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
