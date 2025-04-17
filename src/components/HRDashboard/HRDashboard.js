@@ -125,7 +125,7 @@ function HRDashboard({ onStart, onBack }) {
 
   return (
     <div className="hr-dashboard">
-      <h2>HR Dashboard</h2>
+      <h2>Student Dashboard</h2>
 
       <label>
         Job Description:
@@ -170,7 +170,7 @@ function HRDashboard({ onStart, onBack }) {
       </label>
       <p>{resumes.length} resume(s) selected</p>
 
-      <label>
+      {/* <label>
         Existing Questions (one per line):
         <textarea
           className="existing-questions"
@@ -178,7 +178,7 @@ function HRDashboard({ onStart, onBack }) {
           onChange={handleExistingQuestionsChange}
           placeholder="Enter existing questions here (one per line)..."
         />
-      </label>
+      </label> */}
 
       {isParsed && (
         <label>

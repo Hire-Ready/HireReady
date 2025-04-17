@@ -30,7 +30,7 @@ const HeroSection = () => {
       buttonClass: "practice-btn",
       animatedIcon: studentIcon,
       iconClass: "student-icon",
-      onClick: () => navigate('/student'),
+      onClick: () => navigate('/hr'),
     },
     {
       title: "For HR Professionals",
