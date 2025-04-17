@@ -8,6 +8,10 @@ const InterviewScreen = ({ config, onFinish, onBack }) => {
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
   const fetchQuestions = async () => {
     setLoading(true);
     try {
@@ -22,10 +26,6 @@ const InterviewScreen = ({ config, onFinish, onBack }) => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchQuestions();
-  }, [fetchQuestions]); // Added fetchQuestions as dependency
 
   const handleAnswerChange = (value) => {
     setAnswers({ ...answers, [currentQuestionIndex]: value });

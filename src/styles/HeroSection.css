@@ -120,3 +120,43 @@
     height: 120px;
   }
 }
+
+
+.hero-section {
+  padding: 20px;
+  background: #1a1a2e;
+  color: #ffffff;
+}
+
+.card {
+  margin: 20px;
+  padding: 20px;
+  background: #2a2a3e;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.card-content h1 {
+  font-size: 2rem;
+}
+
+.card-content p {
+  margin: 10px 0;
+}
+
+.practice-btn, .talent-btn {
+  background: linear-gradient(45deg, #a3a3ff, #00aaff);
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-icon {
+  margin-right: 5px;
+}
+
+.student-icon, .hr-icon {
+  margin-top: 20px;
+}

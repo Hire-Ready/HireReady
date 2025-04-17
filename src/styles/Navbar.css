@@ -34,3 +34,37 @@
   transform: scale(1.05);
   box-shadow: 0px 4px 6px rgba(255, 204, 0, 0.4);
 }
+.navbar-links li a {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.navbar-links li a:hover {
+  text-decoration: underline;
+}
+
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: #1a1a2e;
+  color: #ffffff;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navbar-links button {
+  background: linear-gradient(45deg, #a3a3ff, #00aaff);
+  color: #ffffff;
+  border: none;
+  padding: 8px 15px;
+  margin-left: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}

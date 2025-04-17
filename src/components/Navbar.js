@@ -1,14 +1,16 @@
-// src/components/Navbar.js
 import React from 'react';
-import './Navbar.css';
+import { useNavigate } from 'react-router-dom';
+import '../components/PricePlanscopy/Navbar.css';
 
-function Navbar({ onHRClick, onCandidateClick }) {
+function Navbar() {
+  const navigate = useNavigate();
+
   return (
     <nav className="navbar">
       <div className="navbar-brand">HR Mock Interview</div>
       <div className="navbar-links">
-      <button onClick={onHRClick}>Hr Mode</button>
-        <button onClick={onCandidateClick}>Candidate Mode</button>
+        <button onClick={() => navigate('/hr')}>HR Mode</button>
+        <button onClick={() => navigate('/start-practicing')}>Candidate Mode</button>
       </div>
     </nav>
   );

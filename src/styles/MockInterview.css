@@ -1,0 +1,51 @@
+.mock-interview-container {
+  padding: 20px;
+  background: #2a2a3e;
+  border-radius: 8px;
+  color: #ffffff;
+}
+
+.job-details {
+  margin-bottom: 20px;
+}
+
+.questions-section, .results-section {
+  margin-top: 20px;
+}
+
+.question-box, .result-box {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #33334d;
+  border-radius: 5px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 100px;
+  margin-top: 10px;
+  background: #1a1a2e;
+  color: #ffffff;
+  border: 1px solid #555;
+  border-radius: 5px;
+}
+
+.start-interview-btn, .back-button {
+  background: linear-gradient(45deg, #a3a3ff, #00aaff);
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.start-interview-btn:disabled, .back-button:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #ff5555;
+  margin-top: 10px;
+}

@@ -1,0 +1,35 @@
+.cv-upload {
+    margin: 20px 0;
+    padding: 20px;
+    background: #2a2a3e;
+    border-radius: 8px;
+    color: #ffffff;
+  }
+  
+  .cv-upload h3 {
+    margin-bottom: 10px;
+  }
+  
+  .cv-upload input[type="file"] {
+    margin-bottom: 15px;
+    color: #d0d0d0;
+  }
+  
+  .upload-button {
+    background: linear-gradient(45deg, #a3a3ff, #00aaff);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .upload-button:disabled {
+    background: #555;
+    cursor: not-allowed;
+  }
+  
+  .error-message {
+    color: #ff5555;
+    margin-top: 10px;
+  }

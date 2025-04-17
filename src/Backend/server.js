@@ -1,13 +1,42 @@
 require('dotenv').config();
 const express = require('express');
-const multer = require('multer');
-const pdfParse = require('pdf-parse');
-const Tesseract = require('tesseract.js');
-const fs = require('fs');
 const cors = require('cors');
-const { generateQuestions } = require('./ai/ollamaClient'); // Import the AI client
+const http = require('http');
+const socketIo = require('socket.io');
+const multer = require('multer'); // Import multer
+const nodemailer = require('nodemailer'); // Importing nodemailer
+const pdfParse = require('pdf-parse'); // Importing pdf-parse
+const fs = require('fs'); // Importing fs
+const uploadRoutes = require('./routes/uploadRoutes');
+const interviewRoutes = require('./routes/interviewRoutes');
+const questionRoutes = require('./routes/questionRoutes');
+const feedbackRoutes = require('./routes/feedbackRoutes');
+
+const questionsCache = new Map();
+const expectedAnswersCache = new Map();
 const app = express();
-const upload = multer({ dest: 'uploads/' });
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); 
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname); 
+  }
+});
+const upload = multer({ storage }); 
+
+app.use('/api', uploadRoutes);
+app.use('/api', interviewRoutes);
+app.use('/api', questionRoutes);
+app.use('/api', feedbackRoutes);
 
 app.use(express.json());
 app.use(
@@ -15,6 +44,61 @@ app.use(
     origin: 'http://localhost:3000',
   })
 );
+
+const hasEmailCredentials = process.env.EMAIL_USER && process.env.EMAIL_PASSWORD;
+
+let sendEmail;
+
+if (hasEmailCredentials) {
+  console.log('Email credentials found. Using real email sending.');
+  
+  const transporter = nodemailer.createTransport({
+    service: process.env.EMAIL_SERVICE || 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD
+    }
+  });
+  
+  sendEmail = async (mailOptions) => {
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      return { 
+        success: true, 
+        messageId: info.messageId 
+      };
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+  };
+} else {
+  console.log('⚠️ NO EMAIL CREDENTIALS FOUND! Email sending will be simulated.');
+  
+  sendEmail = async (mailOptions) => {
+    console.log('');
+    console.log('📧 MOCK EMAIL SENDING (credentials not configured)');
+    console.log('📧 To:', mailOptions.to);
+    console.log('📧 Subject:', mailOptions.subject);
+    console.log('📧 Content would be sent if credentials were configured.');
+    console.log('');
+    
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    return { 
+      success: true, 
+      messageId: 'mock-email-' + Date.now(),
+      simulated: true
+    };
+  };
+}
+
+// Extract email from resume text using regex
+function extractEmailFromResume(resumeText) {
+  const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+  const matches = resumeText.match(emailRegex);
+  return matches ? matches[0] : null;
+}
 
 app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
   try {
@@ -28,9 +112,15 @@ app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
           const ocrResult = await Tesseract.recognize(file.path, 'eng');
           extractedText = ocrResult.data.text;
         }
-
+        
+        // Extract email from the resume
+        const email = extractEmailFromResume(extractedText);
+        
         fs.unlinkSync(file.path);
-        return extractedText;
+        return {
+          text: extractedText,
+          email: email
+        };
       })
     );
     res.json({ resumeData });
@@ -40,59 +130,8 @@ app.post('/upload-resumes', upload.array('resumes'), async (req, res) => {
   }
 });
 
-app.post('/questions', async (req, res) => {
-  console.log('Received request for questions');
-  const { resumeData, jobDescription, employeeCount, role, existingQuestions } = req.body;
 
-  const safeResumeData = Array.isArray(resumeData) ? resumeData : [];
-  const safeExistingQuestions = Array.isArray(existingQuestions) ? existingQuestions : [];
-
-  try {
-    console.log('Generating questions with parameters:', {
-      jobDescription: jobDescription?.substring(0, 50) + '...' || 'Not provided',
-      employeeCount: employeeCount || 'Not provided',
-      role: role || 'Not provided',
-      resumeDataCount: safeResumeData.length,
-      existingQuestionsCount: safeExistingQuestions.length
-    });
-    
-    const questions = await generateQuestions({
-      jobDescription: jobDescription || 'Not provided',
-      employeeCount: employeeCount || 'Not provided',
-      role: role || 'Not provided',
-      resumeData: safeResumeData,
-      existingQuestions: safeExistingQuestions,
-    });
-    
-    console.log('Questions generated successfully:', questions);
-    res.json({ questions });
-  } catch (error) {
-    console.error('Error generating questions with Ollama:', error);
-    res.status(500).json({ 
-      error: 'Failed to generate questions',
-      questions: ['Tell me about yourself.', 'Why do you want this job?', 'What are your strengths?', 'What are your weaknesses?', 'Where do you see yourself in 5 years?'] 
-    });
-  }
-});
-
-app.post('/feedback', (req, res) => {
-  const { responses } = req.body;
-  const feedback =
-    responses.length > 0
-      ? 'Your answers were detailed, but try to be more concise.'
-      : 'Please provide more detailed answers.';
-  res.json({ feedback });
-});
-
-// Simple test endpoint to check connectivity with Ollama
-app.get('/test-ollama', async (req, res) => {
-  try {
-    const response = await axios.get('http://localhost:11434/api/tags');
-    res.json({ status: 'success', models: response.data });
-  } catch (error) {
-    res.status(500).json({ status: 'error', message: error.message });
-  }
-});
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}. Access at http://localhost:${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}. Access at http://localhost:${PORT}`));
+

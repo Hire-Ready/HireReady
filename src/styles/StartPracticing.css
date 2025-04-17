@@ -1,0 +1,33 @@
+.start-practicing {
+  padding: 20px;
+  background: #2a2a3e;
+  border-radius: 8px;
+  color: #ffffff;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  background: #1a1a2e;
+  color: #ffffff;
+  border: 1px solid #555;
+  border-radius: 5px;
+}
+
+.practice-button {
+  background: linear-gradient(45deg, #a3a3ff, #00aaff);
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}

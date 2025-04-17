@@ -1,46 +1,35 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import './App.css';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
-import HowItWorks from './components/HowItWorks/HowItWorks';
-import OurTeam from './components/OurTeam/OurTeam';
-import PricingPlans from './components/PricePlans/PricingPlans';
-import LatestArticles from './components/LatestArticles/LatestArticles';
-import FAQs from './components/FAQs/FAQs';
-import Contact from './components/Contact/Contact';
-import End from './components/end/End';
-import ParticlesBackground from './components/ParticlesBackground';
-import HRDashboard from './components/HRDashboard/HRDashboard';
-import InterviewSetup from './components/InterviewSetup/InterviewSetup';
+import StartPracticing from './components/Practise/StartPracticing';
+import MockInterview from './components/Practise/MockInterview';
+import FeedbackScreen from './components/FeedbackScreen';
 import InterviewScreen from './components/InterviewScreen/InterviewScreen';
-import FeedbackScreen from './components/FeedbackScreen/FeedbackScreen';
+import ParticlesBackground from './components/ParticlesBackground';
 
 function App() {
+  const navigate = useNavigate();
   const [interviewConfig, setInterviewConfig] = React.useState({});
-  const [responses, setResponses] = React.useState([]);
+  const [responses, setResponses] = React.useState(null); // Used in feedback route
   const [showBackToTop, setShowBackToTop] = React.useState(false);
-
-  const handleHRStart = (config) => {
-    setInterviewConfig(config);
-    window.history.pushState(null, '', '/interview');
-  };
 
   const handleCandidateStart = (config) => {
     setInterviewConfig(config);
-    window.history.pushState(null, '', '/interview');
+    navigate('/interview'); // Used to navigate to interview
   };
 
   const handleFinish = (userResponses) => {
     setResponses(userResponses);
-    window.history.pushState(null, '', '/feedback');
+    navigate('/feedback');
   };
 
   const handleBackToLanding = () => {
     setInterviewConfig({});
-    setResponses([]);
-    window.history.pushState(null, '', '/');
+    setResponses(null);
+    navigate('/');
   };
 
   React.useEffect(() => {
@@ -59,54 +48,83 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const pageVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 }
+  };
+
   return (
     <div className="App">
       <ParticlesBackground />
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        <Navbar onHRClick={() => window.history.pushState(null, '', '/hr')} 
-               onCandidateClick={() => window.history.pushState(null, '', '/setup')} />
-
-        <Routes>
-          <Route path="/" element={
-            <>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
+      <div className="app-content">
+        <Navbar />
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={
+              <motion.section 
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                variants={pageVariants}
+                transition={{ duration: 0.5 }}
+              >
                 <HeroSection />
+              </motion.section>
+            } />
+            <Route path="/start-practicing" element={
+              <motion.div 
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                variants={pageVariants}
+                transition={{ duration: 0.5 }}
+              >
+                <StartPracticing onStart={handleCandidateStart} />
               </motion.div>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.2 }}>
-                <HowItWorks />
+            } />
+            <Route path="/mock-interview" element={
+              <motion.div 
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                variants={pageVariants}
+                transition={{ duration: 0.5 }}
+              >
+                <MockInterview />
               </motion.div>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.4 }}>
-                <OurTeam />
+            } />
+            <Route path="/interview" element={
+              <motion.div 
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                variants={pageVariants}
+                transition={{ duration: 0.5 }}
+              >
+                <InterviewScreen config={interviewConfig} onFinish={handleFinish} onBack={handleBackToLanding} />
               </motion.div>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.6 }}>
-                <PricingPlans />
+            } />
+            <Route path="/feedback" element={
+              <motion.div 
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                variants={pageVariants}
+                transition={{ duration: 0.5 }}
+              >
+                <FeedbackScreen responses={responses} />
               </motion.div>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.8 }}>
-                <LatestArticles />
-              </motion.div>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.0 }}>
-                <FAQs />
-              </motion.div>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.2 }}>
-                <Contact />
-              </motion.div>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.4 }}>
-                <End />
-              </motion.div>
-            </>
-          } />
-          <Route path="/hr" element={<HRDashboard onStart={handleHRStart} onBack={handleBackToLanding} />} />
-          <Route path="/setup" element={<InterviewSetup onStart={handleCandidateStart} onBack={handleBackToLanding} />} />
-          <Route path="/interview" element={<InterviewScreen config={interviewConfig} onFinish={handleFinish} onBack={handleBackToLanding} />} />
-          <Route path="/feedback" element={<FeedbackScreen responses={responses} onBack={handleBackToLanding} />} />
-        </Routes>
-
-        {showBackToTop && (
-          <button className="back-to-top" onClick={scrollToTop} aria-label="Back to Top">
-            {/* Add your back-to-top icon or text here, e.g., <span>↑</span> */}
-          </button>
-        )}
+            } />
+          </Routes>
+        </main>
       </div>
+
+      {showBackToTop && (
+        <button className="back-to-top" onClick={scrollToTop} aria-label="Back to Top">
+          <span>↑</span>
+        </button>
+      )}
     </div>
   );
 }

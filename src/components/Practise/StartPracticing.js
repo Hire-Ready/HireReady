@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CVUpload from './CVUpload';
-import '../styles/InterviewSetup.css';
+import axios from 'axios';
+import CVUpload from '../Practise/CVUploads';
+import '../PricePlanscopy/StartPracticing.css';
 
-const InterviewSetup = ({ onStart, onBack }) => {
+const StartPracticing = () => {
   const [role, setRole] = useState('');
   const [company, setCompany] = useState('');
   const [experience, setExperience] = useState('');
@@ -14,18 +15,25 @@ const InterviewSetup = ({ onStart, onBack }) => {
     setCvData(data);
   };
 
-  const handleStart = () => {
+  const handleStartInterview = async () => {
     if (!role || !company || !cvData) {
       alert('Please fill in all fields and upload a CV.');
       return;
     }
-    onStart({ role, company, experience, cvData });
-    navigate('/interview');
+    try {
+      navigate('/mock-interview', {
+        state: { role, company, experience, cvData }
+      });
+    } catch (error) {
+      console.error('Error starting interview:', error);
+      alert('Failed to start interview.');
+    }
   };
 
   return (
-    <div className="interview-setup">
-      <h2>Interview Setup</h2>
+    <div className="start-practicing">
+      <h2>Start Practicing Today</h2>
+      <p>Upload your CV and enter job details to begin your mock interview.</p>
       <div className="form-group">
         <label>Job Role:</label>
         <input
@@ -54,10 +62,11 @@ const InterviewSetup = ({ onStart, onBack }) => {
         />
       </div>
       <CVUpload onUploadSuccess={handleUploadSuccess} />
-      <button onClick={handleStart} className="start-btn">Start Interview</button>
-      <button onClick={onBack} className="back-btn">Back</button>
+      <button className="practice-button" onClick={handleStartInterview}>
+        Start Mock Interview
+      </button>
     </div>
   );
 };
 
-export default InterviewSetup;
+export default StartPracticing;

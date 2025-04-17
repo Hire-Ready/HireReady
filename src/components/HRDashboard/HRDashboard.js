@@ -13,6 +13,8 @@ function HRDashboard({ onStart, onBack }) {
   const [employeeCount, setEmployeeCount] = useState('1');
   const [role, setRole] = useState('');
   const [existingQuestions, setExistingQuestions] = useState(['Tell me about yourself.', 'Why do you want this job?']);
+  const [interviewTime, setInterviewTime] = useState('');
+  const [emailStatus, setEmailStatus] = useState(null);
   const navigate = useNavigate();
 
   const handleFileUpload = (e) => {
@@ -50,7 +52,7 @@ function HRDashboard({ onStart, onBack }) {
   };
 
   const handleProceed = () => {
-    onStart({ resumeData: parsedData, jobDescription, employeeCount, role });
+    onStart({ resumeData: parsedData, jobDescription, employeeCount, role, existingQuestions });
   };
 
   const handlePaste = () => {
@@ -72,6 +74,37 @@ function HRDashboard({ onStart, onBack }) {
   const handleExistingQuestionsChange = (e) => {
     const questions = e.target.value.split('\n').filter(q => q.trim());
     setExistingQuestions(questions.length ? questions : ['Tell me about yourself.', 'Why do you want this job?']);
+  };
+
+  const sendInterviewInvites = async () => {
+    if (!isParsed || !interviewTime || !role) {
+      setErrorMessage('Please parse resumes, enter interview time, and role before sending invites.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await axios.post('http://localhost:3001/send-interview-invites', {
+        candidates: parsedData,
+        interviewTime,
+        role
+      });
+      
+      setEmailStatus({
+        success: true,
+        message: `Successfully sent interview invitations to ${response.data.results.filter(r => r.success).length} candidates.`,
+        details: response.data.results
+      });
+    } catch (error) {
+      console.error('Error sending interview invites:', error);
+      setEmailStatus({
+        success: false,
+        message: 'Failed to send interview invitations. Please try again.',
+        error: error.response?.data?.error || error.message
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const goToInterviewScreen = () => {
@@ -147,6 +180,18 @@ function HRDashboard({ onStart, onBack }) {
         />
       </label>
 
+      {isParsed && (
+        <label>
+          Interview Date and Time:
+          <input
+            type="datetime-local"
+            value={interviewTime}
+            onChange={(e) => setInterviewTime(e.target.value)}
+            className="interview-time"
+          />
+        </label>
+      )}
+
       <div className="button-group">
         <button onClick={handleParse} disabled={!resumes.length || isLoading}>
           {isLoading ? (<><span className="spinner"></span> Parsing...</>) : 'Parse Resumes'}
@@ -155,11 +200,39 @@ function HRDashboard({ onStart, onBack }) {
         <button onClick={goToInterviewScreen} disabled={!isParsed || !jobDescription || !role}>
           Interview Screen
         </button>
+        {isParsed && (
+          <button 
+            onClick={sendInterviewInvites} 
+            disabled={isLoading || !interviewTime || !role}
+            className="send-invites-button"
+          >
+            {isLoading ? (<><span className="spinner"></span> Sending...</>) : 'Send Interview Invites'}
+          </button>
+        )}
       </div>
 
       {errorMessage && (
         <div className="error-message">
           <p style={{ color: 'red' }}>{errorMessage}</p>
+        </div>
+      )}
+
+      {emailStatus && (
+        <div className={`email-status ${emailStatus.success ? 'success' : 'error'}`}>
+          <h4>{emailStatus.success ? 'Email Sent Successfully' : 'Email Sending Failed'}</h4>
+          <p>{emailStatus.message}</p>
+          {emailStatus.details && (
+            <div className="email-details">
+              {emailStatus.details.map((result, idx) => (
+                <p key={idx}>
+                  {result.success 
+                    ? `✓ Email sent to ${result.email}`
+                    : `✗ Failed: ${result.error}`
+                  }
+                </p>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -169,7 +242,7 @@ function HRDashboard({ onStart, onBack }) {
           {parsedData.length > 0 ? (
             parsedData.map((data, index) => (
               <div key={index} className="resume-data">
-                <h4>Resume {index + 1}</h4>
+                <h4>Resume {index + 1} {data.email ? `(${data.email})` : ''}</h4>
                 <pre>{typeof data === 'object' ? JSON.stringify(data, null, 2) : data}</pre>
               </div>
             ))

@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Typewriter } from 'react-simple-typewriter';
-import "./HeroSection.css";
+import { useNavigate } from 'react-router-dom';
+import "../styles/HeroSection.css";
 import rocketIcon from "../assets/rocket-icon.png";
 import searchIcon from "../assets/search-icon.png";
 import studentIcon from "../assets/student.png";
 import hrIcon from "../assets/hr.png";
-import HRDashboard from "./HRDashboard/HRDashboard"; // Ensure correct import
+import StartPracticing from "../components/Practise/StartPracticing";
 
 const HeroSection = () => {
-  const [showHRDashboard, setShowHRDashboard] = useState(false);
+  const [showStartPracticing, setShowStartPracticing] = useState(false);
+  const navigate = useNavigate();
 
   const bounceAnimation = {
     y: [0, 19, 0],
@@ -30,6 +32,7 @@ const HeroSection = () => {
       buttonClass: "practice-btn",
       animatedIcon: studentIcon,
       iconClass: "student-icon",
+      onClick: () => setShowStartPracticing(true),
     },
     {
       title: "For HR Professionals",
@@ -39,12 +42,12 @@ const HeroSection = () => {
       buttonClass: "talent-btn",
       animatedIcon: hrIcon,
       iconClass: "hr-icon",
-      onClick: () => setShowHRDashboard(true), // Set state to show HRDashboard
+      onClick: () => navigate('/hr'),
     },
   ];
 
-  if (showHRDashboard) {
-    return <HRDashboard onBack={() => setShowHRDashboard(false)} />; // Show HRDashboard and handle back
+  if (showStartPracticing) {
+    return <StartPracticing />;
   }
 
   return (
