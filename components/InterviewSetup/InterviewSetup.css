@@ -1,0 +1,120 @@
+/* src/components/InterviewSetup/InterviewSetup.css */
+.interview-setup {
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.interview-setup h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.interview-setup label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #4a5568;
+  margin-bottom: 20px;
+}
+
+.interview-setup input[type="file"] {
+  margin-top: 10px;
+  padding: 10px;
+  border: 2px dashed #cbd5e0;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 0.9rem;
+  color: #718096;
+  cursor: pointer;
+  width: 100%;
+  max-width: 400px;
+}
+
+.interview-setup input[type="file"]::-webkit-file-upload-button {
+  background-color: #4c51bf;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.interview-setup input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: #5a67d8;
+}
+
+.interview-setup textarea {
+  width: 100%;
+  max-width: 600px;
+  min-height: 150px;
+  padding: 12px;
+  margin-top: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #2d3748;
+  resize: vertical;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.interview-setup textarea:focus {
+  outline: none;
+  border-color: #4c51bf;
+  box-shadow: 0 0 0 3px rgba(76, 81, 191, 0.2);
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.button-group button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background-color: #4c51bf;
+  color: white;
+}
+
+.button-group button:hover {
+  background-color: #5a67d8;
+}
+
+.button-group button:disabled {
+  background-color: #e2e8f0;
+  color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.interview-setup div {
+  margin-top: 30px;
+  max-width: 800px;
+  width: 100%;
+}
+
+.interview-setup p {
+  font-size: 1rem;
+  color: #2d3748;
+  background-color: #f7fafc;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
