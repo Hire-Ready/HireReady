@@ -3,111 +3,291 @@ import axios from 'axios';
 import './HRDashboard.css';
 import { useNavigate } from 'react-router-dom';
 
-function HRDashboard({ onStart, onBack }) {
+function ProgressTracker({ steps, currentStep }) {
+  return (
+    <div className="progress-tracker">
+      <div className="progress-cards">
+        {steps.map((step, index) => (
+          <div key={index} className={`progress-card ${index === currentStep ? 'current' : ''}`}>
+            <div className="step-circle">
+              {index + 1}
+            </div>
+            <div className="step-label">{step.title}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HRDashboard({ onBack }) {
+  const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(0);
+  
+  // Form states
   const [resumes, setResumes] = useState([]);
-  const [parsedData, setParsedData] = useState([]);
-  const [isParsed, setIsParsed] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [jobDescription, setJobDescription] = useState('');
   const [employeeCount, setEmployeeCount] = useState('1');
   const [role, setRole] = useState('');
   const [existingQuestions, setExistingQuestions] = useState(['Tell me about yourself.', 'Why do you want this job?']);
   const [interviewTime, setInterviewTime] = useState('');
+  
+  // Process states
+  const [parsedData, setParsedData] = useState([]);
+  const [isParsed, setIsParsed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [emailStatus, setEmailStatus] = useState(null);
-  const navigate = useNavigate();
 
-  const handleFileUpload = (e) => {
+  // Define all steps (removed "Parse Resumes")
+  const steps = [
+    {
+      title: "Upload Resumes",
+      isCompleted: () => resumes.length > 0 && isParsed,
+      component: (
+        <div className="step-content">
+          <h3>Upload Resumes</h3>
+          <div className="upload-box">
+            <label className="file-upload-label">
+              <span className="upload-icon">📁</span>
+              <span>Upload Candidate Resumes</span>
+              <input type="file" multiple accept=".pdf" onChange={handleFileUpload} className="file-input" />
+            </label>
+            <p>{resumes.length} resume(s) selected{isParsed ? ' (Parsed)' : ''}</p>
+            {errorMessage && <div className="error-message"><p>{errorMessage}</p></div>}
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Enter Job Details",
+      isCompleted: () => jobDescription.trim() !== '' && role.trim() !== '',
+      component: (
+        <div className="step-content">
+          <h3>Enter Job Details</h3>
+          <div className="job-details">
+            <label>
+              Role Title:
+              <input
+                type="text"
+                className="role-input"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                placeholder="e.g., Frontend Developer"
+              />
+            </label>
+
+            <label>
+              Job Description:
+              <div className="job-description-wrapper">
+                <textarea
+                  className="job-description"
+                  value={jobDescription}
+                  onChange={(e) => setJobDescription(e.target.value)}
+                  placeholder="Enter or paste job description here..."
+                />
+                <button className="paste-button" onClick={handlePaste}>Paste</button>
+              </div>
+            </label>
+
+            <label>
+              Number of Positions:
+              <input
+                type="number"
+                className="employee-count"
+                value={employeeCount}
+                onChange={handleEmployeeCountChange}
+                min="1"
+                placeholder="e.g., 5"
+              />
+            </label>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Schedule Interview",
+      isCompleted: () => interviewTime !== '',
+      component: (
+        <div className="step-content">
+          <h3>Schedule Interview</h3>
+          <p>Set the date and time for the AI mock interviews.</p>
+          <label>
+            Interview Date and Time:
+            <input
+              type="datetime-local"
+              value={interviewTime}
+              onChange={(e) => setInterviewTime(e.target.value)}
+              className="interview-time"
+            />
+          </label>
+        </div>
+      )
+    },
+    {
+      title: "Send Invites",
+      isCompleted: () => emailStatus !== null && emailStatus.success,
+      component: (
+        <div className="step-content">
+          <h3>Send Interview Invites</h3>
+          <p>Send automated email invitations to all candidates for their AI mock interviews.</p>
+          <button 
+            onClick={sendInterviewInvites} 
+            disabled={isLoading}
+            className="primary-button action-button send-invites-button"
+          >
+            {isLoading ? (<><span className="spinner"></span> Sending...</>) : 'Send Interview Invites'}
+          </button>
+          
+          {emailStatus && (
+            <div className={`email-status ${emailStatus.success ? 'success' : 'error'}`}>
+              <h4>{emailStatus.success ? 'Email Sent Successfully' : 'Email Sending Failed'}</h4>
+              <p>{emailStatus.message}</p>
+              {emailStatus.details && (
+                <div className="email-details">
+                  {emailStatus.details.map((result, idx) => (
+                    <p key={idx}>
+                      {result.success 
+                        ? `✓ Email sent to ${result.email}`
+                        : `✗ Failed: ${result.error}`
+                      }
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )
+    },
+    {
+      title: "View Results",
+      isCompleted: () => true,
+      component: (
+        <div className="step-content">
+          <h3>Interview Setup Complete</h3>
+          <p>All candidates have been invited to their AI mock interviews.</p>
+          <div className="parsed-data">
+            <h4>Candidate Summary</h4>
+            <div className="resume-grid">
+              {parsedData.length > 0 ? (
+                parsedData.map((data, index) => (
+                  <div key={index} className="resume-card">
+                    <h4>Candidate {index + 1}</h4>
+                    <p>Email: {data.email || 'N/A'}</p>
+                    <p>Name: {data.name || 'N/A'}</p>
+                    <details>
+                      <summary>View Details</summary>
+                      <pre>{typeof data === 'object' ? JSON.stringify(data, null, 2) : data}</pre>
+                    </details>
+                  </div>
+                ))
+              ) : (
+                <p>No data parsed.</p>
+              )}
+            </div>
+            <button 
+              onClick={goToInterviewScreen} 
+              className="primary-button action-button"
+            >
+              Preview AI Interview
+            </button>
+          </div>
+        </div>
+      )
+    }
+  ];
+
+  function handleFileUpload(e) {
     const files = Array.from(e.target.files);
+    if (!files.length) return;
+    
     setResumes(files);
-    setParsedData([]);
-    setIsParsed(false);
-    setErrorMessage('');
-  };
-
-  const handleParse = async () => {
-    if (!resumes.length) return;
-    setErrorMessage('');
     setIsLoading(true);
+    setErrorMessage('');
+
     const formData = new FormData();
-    resumes.forEach((resume) => {
+    files.forEach((resume) => {
       formData.append('resumes', resume);
     });
-    try {
-      const response = await axios.post('http://localhost:3001/upload-resumes', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+
+    axios.post('http://localhost:3001/upload-resumes', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    .then(response => {
       setParsedData(response.data.resumeData || []);
       setIsParsed(true);
-    } catch (error) {
+    })
+    .catch(error => {
       console.error('Error uploading resumes:', error);
       setErrorMessage(
         error.response?.data?.details
           ? `Failed to parse resumes: ${error.response.data.details}`
           : 'Failed to parse resumes. Please ensure the backend server is running on port 3001.'
       );
-    } finally {
+      setIsParsed(false);
+    })
+    .finally(() => {
       setIsLoading(false);
-    }
-  };
+    });
+  }
 
-  const handleProceed = () => {
-    onStart({ resumeData: parsedData, jobDescription, employeeCount, role, existingQuestions });
-  };
+  function handleParse() {
+    // This function is no longer needed as parsing is handled in handleFileUpload
+  }
 
-  const handlePaste = () => {
+  function handlePaste() {
     navigator.clipboard.readText()
-      .then(text => setJobDescription(text))
+      .then(text => {
+        setJobDescription(text);
+      })
       .catch(err => {
         console.error('Failed to paste: ', err);
         setErrorMessage('Failed to paste from clipboard');
       });
-  };
+  }
 
-  const handleEmployeeCountChange = (e) => {
+  function handleEmployeeCountChange(e) {
     const value = e.target.value;
     if (value === '' || (Number(value) >= 1 && !isNaN(value))) {
       setEmployeeCount(value);
     }
-  };
+  }
 
-  const handleExistingQuestionsChange = (e) => {
-    const questions = e.target.value.split('\n').filter(q => q.trim());
-    setExistingQuestions(questions.length ? questions : ['Tell me about yourself.', 'Why do you want this job?']);
-  };
-
-  const sendInterviewInvites = async () => {
+  function sendInterviewInvites() {
     if (!isParsed || !interviewTime || !role) {
       setErrorMessage('Please parse resumes, enter interview time, and role before sending invites.');
       return;
     }
 
     setIsLoading(true);
-    try {
-      const response = await axios.post('http://localhost:3001/send-interview-invites', {
-        candidates: parsedData,
-        interviewTime,
-        role
-      });
-      
+    
+    axios.post('http://localhost:3001/send-interview-invites', {
+      candidates: parsedData,
+      interviewTime,
+      role
+    })
+    .then(response => {
       setEmailStatus({
         success: true,
         message: `Successfully sent interview invitations to ${response.data.results.filter(r => r.success).length} candidates.`,
         details: response.data.results
       });
-    } catch (error) {
+    })
+    .catch(error => {
       console.error('Error sending interview invites:', error);
       setEmailStatus({
         success: false,
         message: 'Failed to send interview invitations. Please try again.',
         error: error.response?.data?.error || error.message
       });
-    } finally {
+    })
+    .finally(() => {
       setIsLoading(false);
-    }
-  };
+    });
+  }
 
-  const goToInterviewScreen = () => {
+  function goToInterviewScreen() {
     if (isParsed && jobDescription && role) {
       navigate('/interview', { 
         state: { 
@@ -121,137 +301,62 @@ function HRDashboard({ onStart, onBack }) {
     } else {
       setErrorMessage('Please parse resumes, enter job description, and role before proceeding.');
     }
-  };
+  }
+
+  function goToNextStep() {
+    const currentStepObj = steps[currentStep];
+    if (currentStepObj.isCompleted()) {
+      setCurrentStep(Math.min(currentStep + 1, steps.length - 1));
+    } else {
+      setErrorMessage(`Please complete the "${currentStepObj.title}" step before proceeding.`);
+    }
+  }
+
+  function goToPreviousStep() {
+    setCurrentStep(Math.max(currentStep - 1, 0));
+    setErrorMessage('');
+  }
 
   return (
     <div className="hr-dashboard">
-      <h2>Student Dashboard</h2>
-
-      <label>
-        Job Description:
-        <div className="job-description-wrapper">
-          <textarea
-            className="job-description"
-            value={jobDescription}
-            onChange={(e) => setJobDescription(e.target.value)}
-            placeholder="Enter or paste job description here..."
-          />
-          <button className="paste-button" onClick={handlePaste}>Paste</button>
-        </div>
-      </label>
-
-      <label>
-        Role:
-        <div className="role">
-          <textarea
-            className="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            placeholder="Enter the role.."
-          />
-        </div>
-      </label>
-
-      <label>
-        Number of Employees Required:
-        <input
-          type="number"
-          className="employee-count"
-          value={employeeCount}
-          onChange={handleEmployeeCountChange}
-          min="1"
-          placeholder="e.g., 5"
-        />
-      </label>
-
-      <label>
-        Upload Resumes:
-        <input type="file" multiple accept=".pdf" onChange={handleFileUpload} />
-      </label>
-      <p>{resumes.length} resume(s) selected</p>
-
-      {/* <label>
-        Existing Questions (one per line):
-        <textarea
-          className="existing-questions"
-          value={existingQuestions.join('\n')}
-          onChange={handleExistingQuestionsChange}
-          placeholder="Enter existing questions here (one per line)..."
-        />
-      </label> */}
-
-      {isParsed && (
-        <label>
-          Interview Date and Time:
-          <input
-            type="datetime-local"
-            value={interviewTime}
-            onChange={(e) => setInterviewTime(e.target.value)}
-            className="interview-time"
-          />
-        </label>
-      )}
-
-      <div className="button-group">
-        <button onClick={handleParse} disabled={!resumes.length || isLoading}>
-          {isLoading ? (<><span className="spinner"></span> Parsing...</>) : 'Parse Resumes'}
-        </button>
-        <button onClick={onBack}>Back to Home</button>
-        <button onClick={goToInterviewScreen} disabled={!isParsed || !jobDescription || !role}>
-          Interview Screen
-        </button>
-        {isParsed && (
-          <button 
-            onClick={sendInterviewInvites} 
-            disabled={isLoading || !interviewTime || !role}
-            className="send-invites-button"
-          >
-            {isLoading ? (<><span className="spinner"></span> Sending...</>) : 'Send Interview Invites'}
-          </button>
+      <a href="#" onClick={onBack} className="back-link">← Back to Job Posting</a>
+      <h2>AI Mock Interview Setup</h2>
+      
+      <ProgressTracker steps={steps} currentStep={currentStep} />
+      
+      <div className="step-container">
+        {steps[currentStep].component}
+        
+        {errorMessage && (
+          <div className="error-message">
+            <p>{errorMessage}</p>
+          </div>
         )}
+        
+        <div className="navigation-buttons">
+          {currentStep > 0 && (
+            <button onClick={goToPreviousStep} className="secondary-button">
+              Back
+            </button>
+          )}
+          
+          {currentStep === 0 && (
+            <button onClick={onBack} className="secondary-button">
+              Back to Home
+            </button>
+          )}
+          
+          {currentStep < steps.length - 1 && (
+            <button 
+              onClick={goToNextStep} 
+              className="primary-button"
+              disabled={!steps[currentStep].isCompleted()}
+            >
+              Next
+            </button>
+          )}
+        </div>
       </div>
-
-      {errorMessage && (
-        <div className="error-message">
-          <p style={{ color: 'red' }}>{errorMessage}</p>
-        </div>
-      )}
-
-      {emailStatus && (
-        <div className={`email-status ${emailStatus.success ? 'success' : 'error'}`}>
-          <h4>{emailStatus.success ? 'Email Sent Successfully' : 'Email Sending Failed'}</h4>
-          <p>{emailStatus.message}</p>
-          {emailStatus.details && (
-            <div className="email-details">
-              {emailStatus.details.map((result, idx) => (
-                <p key={idx}>
-                  {result.success 
-                    ? `✓ Email sent to ${result.email}`
-                    : `✗ Failed: ${result.error}`
-                  }
-                </p>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {isParsed && (
-        <div className="parsed-data">
-          <h3>Parsed Resume Data</h3>
-          {parsedData.length > 0 ? (
-            parsedData.map((data, index) => (
-              <div key={index} className="resume-data">
-                <h4>Resume {index + 1} {data.email ? `(${data.email})` : ''}</h4>
-                <pre>{typeof data === 'object' ? JSON.stringify(data, null, 2) : data}</pre>
-              </div>
-            ))
-          ) : (
-            <p>No data parsed.</p>
-          )}
-          <button onClick={handleProceed}>Proceed to Interview</button>
-        </div>
-      )}
     </div>
   );
 }
