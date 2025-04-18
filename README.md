@@ -57,9 +57,11 @@ cd hireready
 
 2. **Install dependencies**
 ```bash
+#for client
 npm install
-# or
-yarn install
+#open new terminal for server
+cd src/backend
+npm install
 ```
 
 3. **Install Ollama**
@@ -81,9 +83,11 @@ ollama pull deepseek-r1:1.5b
 
 5. **Start the development server**
 ```bash
+#for client
 npm start
-# or
-yarn start
+#open new terminal for server
+cd src/backend
+node server
 ```
 
 ## 🤖 AI Integration
